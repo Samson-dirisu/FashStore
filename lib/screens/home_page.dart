@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
         animationDuration: Duration(milliseconds: 1000),
         dotSize: 4.0,
         indicatorBgPadding: 10.0,
+        dotBgColor: Colors.transparent
       ),
     );
 
@@ -98,8 +99,8 @@ class _HomePageState extends State<HomePage> {
               ),
               InkWell(
                 child: ListTile(
-                  title: Text("Categories"),
-                  leading: Icon(Icons.dashboard, color: Colors.red),
+                  title: Text("Shopping cart"),
+                  leading: Icon(Icons.shopping_cart, color: Colors.red),
                 ),
                 onTap: () {},
               ),
@@ -155,6 +156,6 @@ class _HomePageState extends State<HomePage> {
             // GRID VIEW BEGINS HERE
             Container(height: 320.0, child: Products()),
           ],
-        ));
+        ),);
   }
 }

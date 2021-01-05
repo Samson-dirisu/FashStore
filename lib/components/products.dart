@@ -1,3 +1,4 @@
+import 'package:FashStore/screens/product_details.dart';
 import 'package:flutter/material.dart';
 
 class Products extends StatefulWidget {
@@ -32,7 +33,7 @@ class _ProductsState extends State<Products> {
       "price": "1800"
     },
     {
-      "name": "Purple heels",
+      "name": " heels",
       "picture": "images/products/hills1.jpeg",
       "old price": "2000",
       "price": "1800"
@@ -71,10 +72,10 @@ class _ProductsState extends State<Products> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      padding: EdgeInsets.only(bottom: 15.0),
       itemCount: productList.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
+          crossAxisCount: 2, crossAxisSpacing: 1),
       itemBuilder: (BuildContext context, int index) {
         return SingleProd(
           productName: productList[index]['name'],
@@ -103,19 +104,49 @@ class SingleProd extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Card(
+        elevation: 3,
         child: Hero(
-          tag: productName,
+          tag: Text("Hero 1"),
           child: Material(
-            child: InkWell(
-              onTap: () {},
+                      child: InkWell(
+
+              // ONTAP FUNCTION
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+
+                      // HERE WE ARE PASSING INFO FROM HOMEPAGE TO PRODUCT DETAIL PAGE
+                      return ProductDetails(
+                        productDetailName: productName,
+                        productDetailNewPrice: productPrice,
+                        productDetailOldPrice: productOldPrice,
+                        productDetailPicture: productPicture,
+                      );
+                    },
+                  ),
+                );
+              },
+
+              // STARTING OF GRIDTILE
               child: GridTile(
                 footer: Container(
-                  color: Colors.white,
+                  color: Colors.white38,
                   child: ListTile(
-                    leading: Text(
-                      productName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    leading: Container(
+                      alignment: Alignment.center,
+                      width: 70.0,
+                      child: Text(
+                        productName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    title: Text(
+                      "\#$productPrice",
+                      style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.w800),
+                    ), 
                   ),
                 ),
                 child: Image.asset(

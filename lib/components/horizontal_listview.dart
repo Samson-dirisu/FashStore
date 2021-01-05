@@ -43,11 +43,13 @@ class HorizontalList extends StatelessWidget {
 }
 
 class Category extends StatelessWidget {
+
   final String imageLocation;
   final String imageCaption;
 
   // CONSTRUCTOR
   Category({this.imageCaption, this.imageLocation});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -71,3 +73,4 @@ class Category extends StatelessWidget {
     );
   }
 }
+ 
