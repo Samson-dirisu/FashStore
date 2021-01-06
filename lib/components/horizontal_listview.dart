@@ -1,3 +1,4 @@
+import 'package:FashStore/components/constants.dart';
 import 'package:flutter/material.dart';
 
 class HorizontalList extends StatelessWidget {
@@ -63,7 +64,9 @@ class Category extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: const EdgeInsets.only(top: 3.0),
-                child: Text(imageCaption),
+                child: Text(imageCaption,style: TextStyle(
+                    color: primaryColor,
+                  ),),
               ),
             ),
           ),

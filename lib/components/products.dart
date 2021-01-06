@@ -1,6 +1,8 @@
 import 'package:FashStore/screens/product_details.dart';
 import 'package:flutter/material.dart';
 
+import 'constants.dart';
+
 class Products extends StatefulWidget {
   @override
   _ProductsState createState() => _ProductsState();
@@ -11,62 +13,62 @@ class _ProductsState extends State<Products> {
     {
       "name": "Male Blazer",
       "picture": "images/products/blazer1.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Female Blazer",
       "picture": "images/products/blazer2.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Red dress",
       "picture": "images/products/dress1.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Black dress",
       "picture": "images/products/dress2.jpeg",
-      "old price": "2000",
-      "price": "1800"
+     "old price": 2000,
+      "price": 1800
     },
     {
       "name": " heels",
       "picture": "images/products/hills1.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Red heels",
       "picture": "images/products/hills2.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Black Pant",
       "picture": "images/products/pants1.jpg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Grey Pant",
       "picture": "images/products/pants2.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Shoe",
       "picture": "images/products/shoe1.jpg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     },
     {
       "name": "Skirt",
       "picture": "images/products/skt1.jpeg",
-      "old price": "2000",
-      "price": "1800"
+      "old price": 2000,
+      "price": 1800
     }
   ];
   @override
@@ -108,15 +110,13 @@ class SingleProd extends StatelessWidget {
         child: Hero(
           tag: Text("Hero 1"),
           child: Material(
-                      child: InkWell(
-
+            child: InkWell(
               // ONTAP FUNCTION
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-
                       // HERE WE ARE PASSING INFO FROM HOMEPAGE TO PRODUCT DETAIL PAGE
                       return ProductDetails(
                         productDetailName: productName,
@@ -139,14 +139,17 @@ class SingleProd extends StatelessWidget {
                       width: 70.0,
                       child: Text(
                         productName,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: headingColor,
+                        ),
                       ),
                     ),
                     title: Text(
                       "\#$productPrice",
                       style: TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.w800),
-                    ), 
+                          color: Colors.red, fontWeight: FontWeight.w800),
+                    ),
                   ),
                 ),
                 child: Image.asset(

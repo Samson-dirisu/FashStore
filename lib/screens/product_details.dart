@@ -1,3 +1,4 @@
+import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +26,8 @@ class _ProductDetailsState extends State<ProductDetails> {
     return Scaffold(
       // APPBAR
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         elevation: 0.1,
+        centerTitle: true,
         title: InkWell(
           child: Text("FashStore"),
           onTap: () {
@@ -77,7 +78,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                         child: Text(
                           widget.productDetailName,
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15.0),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.0,
+                            color: headingColor,
+                          ),
                         ),
                       ),
                       title: Row(
@@ -262,7 +266,7 @@ class _ProductDetailsState extends State<ProductDetails> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16.0,
-                color: Colors.black,
+                color: headingColor,
               ),
             ),
             subtitle: Padding(
@@ -273,7 +277,8 @@ class _ProductDetailsState extends State<ProductDetails> {
               child: Text(
                 "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard dummy text ever since the 1500's, when an unknown printer took a gallery of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesettng remaining essentially unchanged. It was popular in the 1960's with the release of Jazz",
                 style: TextStyle(
-                  letterSpacing: 1,
+                  letterSpacing: 0.7,
+                  color: primaryColor,
                   fontSize: 14.0,
                 ),
                 textAlign: TextAlign.justify,
@@ -290,7 +295,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 child: Text(
                   "Product name: ",
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),
@@ -298,7 +303,10 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Text(widget.productDetailName),
+                child: Text(widget.productDetailName, 
+                style: TextStyle(
+                  color: primaryColor,
+                ),),
               ),
             ],
           ),
@@ -311,7 +319,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 child: Text(
                   "Product brand: ",
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),
@@ -321,7 +329,9 @@ class _ProductDetailsState extends State<ProductDetails> {
               //TODO: Remember to create product brand
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Text("Brand x"),
+                child: Text("Brand x", style: TextStyle(
+                  color: primaryColor,
+                ),),
               ),
             ],
           ),
@@ -334,7 +344,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 child: Text(
                   "Product condition: ",
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),
@@ -342,14 +352,16 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Text("New"),
+                child: Text("New", style: TextStyle(
+                  color: primaryColor,
+                ),),
               ),
             ],
           ),
 
           // SIMILAR PRODUCT SECTION
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.0),
+            padding: EdgeInsets.symmetric(vertical: 10.0),
             child: Text(
               "Similar Product",
               style: TextStyle(
@@ -358,8 +370,167 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
             ),
           ),
-          Container(height: 360.0, child: Products())
+          Container(height: 360.0, child: SimilarProducts())
         ],
+      ),
+    );
+  }
+}
+
+class SimilarProducts extends StatefulWidget {
+  @override
+  _SimilarProductsState createState() => _SimilarProductsState();
+}
+
+class _SimilarProductsState extends State<SimilarProducts> {
+  var productList = [
+    {
+      "name": "Male Blazer",
+      "picture": "images/products/blazer1.jpeg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Female Blazer",
+      "picture": "images/products/blazer2.jpeg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Red dress",
+      "picture": "images/products/dress1.jpeg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Black dress",
+      "picture": "images/products/dress2.jpeg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": " heels",
+      "picture": "images/products/hills1.jpeg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Red heels",
+      "picture": "images/products/hills2.jpeg",
+     "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Black Pant",
+      "picture": "images/products/pants1.jpg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Grey Pant",
+      "picture": "images/products/pants2.jpeg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Shoe",
+      "picture": "images/products/shoe1.jpg",
+      "old price": 2000,
+      "price": 1800
+    },
+    {
+      "name": "Skirt",
+      "picture": "images/products/skt1.jpeg",
+     "old price": 2000,
+      "price": 1800
+    }
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.only(bottom: 15.0),
+      itemCount: productList.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, crossAxisSpacing: 1),
+      itemBuilder: (BuildContext context, int index) {
+        return SingleProd(
+          productName: productList[index]['name'],
+          productOldPrice: productList[index]['old price'],
+          productPicture: productList[index]['picture'],
+          productPrice: productList[index]['price'],
+        );
+      },
+    );
+  }
+}
+
+class SimilarSingleProd extends StatelessWidget {
+  final productName;
+  final productPicture;
+  final productOldPrice;
+  final productPrice;
+
+  // CONSTRUCTOR
+  SimilarSingleProd(
+      {this.productName,
+      this.productOldPrice,
+      this.productPicture,
+      this.productPrice});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Card(
+        elevation: 3,
+        child: Hero(
+          tag: Text("Hero 1"),
+          child: Material(
+            child: InkWell(
+              // ONTAP FUNCTION
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      // HERE WE ARE PASSING INFO FROM HOMEPAGE TO PRODUCT DETAIL PAGE
+                      return ProductDetails(
+                        productDetailName: productName,
+                        productDetailNewPrice: productPrice,
+                        productDetailOldPrice: productOldPrice,
+                        productDetailPicture: productPicture,
+                      );
+                    },
+                  ),
+                );
+              },
+
+              // STARTING OF GRIDTILE
+              child: GridTile(
+                footer: Container(
+                  color: Colors.white38,
+                  child: ListTile(
+                    leading: Container(
+                      alignment: Alignment.center,
+                      width: 70.0,
+                      child: Text(
+                        productName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    title: Text(
+                      "\#$productPrice",
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                ),
+                child: Image.asset(
+                  productPicture,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
