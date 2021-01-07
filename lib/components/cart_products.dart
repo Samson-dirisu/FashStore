@@ -72,22 +72,26 @@ class SingleCartProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
+
+      // STARTING OF LISTILE
       child: ListTile(
-        contentPadding: EdgeInsets.only(left: 0),
+        contentPadding: EdgeInsets.only(left: 0, top: 0),
         // LEADING
         leading: Image.asset(cartProductPicture, width: 80.0, height: 80),
         //TITLE
-        title: Text(cartProductName, style: TextStyle(
-          color: headingColor,
-          fontWeight: FontWeight.w500
-        ),),
+        title: Text(
+          cartProductName,
+          style: TextStyle(color: headingColor, fontWeight: FontWeight.w500),
+        ),
         // STARTING OF COLUMN
         subtitle: Column(
           children: [
             Row(
               children: [
-      //   ====== THIS SECTION IS FOR THE SIZE OF THE PRODUCT =======
+
+  //  ====== THIS SECTION IS FOR THE SIZE OF THE PRODUCT =======
                 Text("Size:"),
+                SizedBox(width: 10),
                 Text(
                   cartProductSize,
                   style: TextStyle(
@@ -96,7 +100,7 @@ class SingleCartProduct extends StatelessWidget {
                 ),
 //    ======= THIS SECTION IS FOR THE COLOR OF THE PRODUCT ======
                 Padding(
-                  padding: EdgeInsets.fromLTRB(20.0, 8.0, 8.0, 8.0),
+                  padding: EdgeInsets.fromLTRB(30.0, 8.0, 10.0, 8.0),
                   child: Text("Color:"),
                 ),
                 Padding(
@@ -110,19 +114,43 @@ class SingleCartProduct extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 5.0),
-    //  =======  THIS SECTION IS FOR THE PRODUCT PRICE ======
+            // sizedbox
+            SizedBox(height: 15.0),
+
+  //  =======  THIS SECTION IS FOR THE PRODUCT PRICE ======
             Container(
               alignment: Alignment.topLeft,
               child: Text(
                 "#$cartProductPrice",
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: primaryColor,
+                  color: Colors.pink,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             )
+          ],
+        ),
+
+//    ========= THIS SECTION IS FOR THE QUANTITY OF THE PRODUCT =======
+        trailing: Column(
+          children: [
+            Expanded(
+              child: InkWell(
+                child: Icon(Icons.arrow_drop_up),
+                onTap: () {},
+              ),
+            ),
+            Expanded(child: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Text("$cartProductQuantity"),
+            )),
+            Expanded(
+              child: InkWell(
+                child: Icon(Icons.arrow_drop_down),
+                onTap: (){},
+              ),
+            ),
           ],
         ),
       ),

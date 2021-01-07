@@ -174,8 +174,10 @@ class _HomePageState extends State<HomePage> {
       ),
 
       // BODY OF SCAFFOLD
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text("My name is TH"),
           // IMAGE CAROUSEL BEGINS HERE
           imageCarousel,
 
@@ -194,7 +196,7 @@ class _HomePageState extends State<HomePage> {
 
           // STARTING OF PADDING WIDGET
           Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: EdgeInsets.only(top : 20.0, bottom: 10, left: 8.0),
             child: Text(
               "Recent Products",
               style:
@@ -203,7 +205,7 @@ class _HomePageState extends State<HomePage> {
           ),
 
           // GRID VIEW BEGINS HERE
-          Container(height: 320.0, child: Products()),
+          Flexible( child: Products()),
         ],
       ),
     );

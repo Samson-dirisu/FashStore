@@ -79,11 +79,14 @@ class _ProductsState extends State<Products> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, crossAxisSpacing: 1),
       itemBuilder: (BuildContext context, int index) {
-        return SingleProd(
-          productName: productList[index]['name'],
-          productOldPrice: productList[index]['old price'],
-          productPicture: productList[index]['picture'],
-          productPrice: productList[index]['price'],
+        return Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: SingleProd(
+            productName: productList[index]['name'],
+            productOldPrice: productList[index]['old price'],
+            productPicture: productList[index]['picture'],
+            productPrice: productList[index]['price'],
+          ),
         );
       },
     );
@@ -91,10 +94,10 @@ class _ProductsState extends State<Products> {
 }
 
 class SingleProd extends StatelessWidget {
-  final productName;
-  final productPicture;
-  final productOldPrice;
-  final productPrice;
+  final String productName;
+  final String productPicture;
+  final int  productOldPrice;
+  final int  productPrice;
 
   // CONSTRUCTOR
   SingleProd(
@@ -146,7 +149,7 @@ class SingleProd extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      "\#$productPrice",
+                     productPrice.toString(),
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.w800),
                     ),
