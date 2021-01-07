@@ -38,13 +38,17 @@ class _CartPageState extends State<CartPage> {
             // TOTAL
             Expanded(
               child: ListTile(
-                title: Text("Total: ", style: TextStyle(
-                  color: headingColor
-                ),),
-                subtitle: Text("#2000", style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 15
-                ),),
+                title: Text(
+                  "Total: ",
+                  style: TextStyle(color: headingColor),
+                ),
+                subtitle: Text(
+                  "#2000",
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ),
 

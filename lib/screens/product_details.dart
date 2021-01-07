@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 class ProductDetails extends StatefulWidget {
   final String productDetailName;
-  final String productDetailNewPrice;
-  final String productDetailOldPrice;
+  final int productDetailNewPrice;
+  final int productDetailOldPrice;
   final String productDetailPicture;
 
   // CONSTRUCTOR
