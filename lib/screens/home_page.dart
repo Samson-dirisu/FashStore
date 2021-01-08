@@ -177,7 +177,6 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("My name is TH"),
           // IMAGE CAROUSEL BEGINS HERE
           imageCarousel,
 
