@@ -14,6 +14,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final _formkey = GlobalKey<FormState>();
+  TextEditingController _emailTextController = TextEditingController();
+  TextEditingController _passwordTextController = TextEditingController();
   SharedPreferences preferences;
   bool loading = false;
   bool isLogedIn = false;
@@ -21,7 +24,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    isSignedIn();
+    // isSignedIn();
   }
 
   void isSignedIn() async {
@@ -109,45 +112,141 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          title: Text(
-            'Login',
-            style: TextStyle(color: Colors.pink),
+      // BODY
+      body: Stack(
+        children: [
+          Container(
+            child: Image.asset(
+              "images/backdrop.jpg",
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
           ),
-          elevation: 0.1,
+          Container(
+            color: Colors.black.withOpacity(0.4),
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Center(
+            child: Form(
+              key: _formkey,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      top: 220.0,
+                    ),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.white.withOpacity(0.5),
+                      elevation: 0.0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: "Email",
+                              icon: Icon(Icons.email),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            controller: _emailTextController,
+                            validator: (value) {
+                              Pattern pattern =
+                                  r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+                              RegExp regex = new RegExp(pattern);
+                              print(value);
+                              if (value.isEmpty) {
+                                return 'Please enter email';
+                              } else {
+                                if (!regex.hasMatch(value))
+                                  return 'Enter valid email';
+                                else
+                                  return null;
+                              }
+                            },),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      top: 8.0,
+                    ),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.white.withOpacity(0.5),
+                      elevation: 0.0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            icon: Icon(Icons.security),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          controller: _passwordTextController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "The password field can not be empty";
+                            } else if (value.length < 6) {
+                              return "The password has to be at least 6 characters long";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      top: 8.0,
+                    ),
+                    child: Material(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Colors.blue.withOpacity(0.8),
+                        elevation: 0.0,
+                        child: MaterialButton(onPressed: () {})),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // VISIBILITY WIDGET
+          Visibility(
+            visible: loading ?? true,
+            child: Container(
+              alignment: Alignment.center,
+              color: Colors.white.withOpacity(0.7),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      // BOTTOM NAVIGATION BAR
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          child: FlatButton(
+            onPressed: () {
+              handlingSignIn();
+            },
+            color: Colors.pink,
+            child: Text(
+              "Sign in/ Sign up with google",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         ),
-
-        // BODY
-        body: Stack(
-          children: [
-            Center(
-              child: FlatButton(
-                onPressed: () {
-                  handlingSignIn();
-                },
-                color: Colors.pink,
-                child: Text(
-                  "Sign in/ Sign up with google",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-
-            // VISIBILITY WIDGET
-            Visibility(
-              visible: loading ?? true,
-              child: Container(
-                alignment: Alignment.center,
-                color: Colors.white.withOpacity(0.7),
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-                ),
-              ),
-            ),
-          ],
-        ));
+      ),
+    );
   }
 }
 
