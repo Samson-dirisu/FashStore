@@ -78,7 +78,7 @@ class _LoginState extends State<Login> {
     UserCredential userCredential =
         await firebaseAuth.signInWithCredential(credential);
 
-    // GET USER
+    // CREATE USER
     User user = userCredential.user;
 
     if (credential != null) {
@@ -90,7 +90,10 @@ class _LoginState extends State<Login> {
 
       // CHECK IF DOCUMENTS IS EMPTY
       if (documents.length == 0) {
-        await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+        await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .set({
           "id": user.uid,
           "username": user.displayName,
           "profilePicture": user.photoURL
@@ -159,6 +162,7 @@ class _LoginState extends State<Login> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             labelText: "Email",
+                            border: InputBorder.none,
                             icon: Icon(
                               Icons.email,
                             ),
@@ -201,6 +205,7 @@ class _LoginState extends State<Login> {
                           decoration: InputDecoration(
                             labelText: "Password",
                             icon: Icon(Icons.lock_outline),
+                            border: InputBorder.none,
                           ),
                           keyboardType: TextInputType.emailAddress,
                           controller: _passwordTextController,

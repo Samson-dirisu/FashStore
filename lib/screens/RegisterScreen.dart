@@ -1,3 +1,4 @@
+import 'package:FashStore/components/database/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +17,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _nameTextController = TextEditingController();
   TextEditingController _confirmPasswordTextController =
       TextEditingController();
+  UserServices _userServices = UserServices();
   String gender;
   String groupValue = "male";
+  bool hidePassword = true;
 
   SharedPreferences preferences;
   bool loading = false;
@@ -37,7 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           Container(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withOpacity(0.8),
             width: double.infinity,
             height: double.infinity,
           ),
@@ -56,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: Material(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withOpacity(0.5),
                       elevation: 0.0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12.0),
@@ -184,22 +187,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       elevation: 0.0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12.0),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                              labelText: "password",
-                              icon: Icon(Icons.lock_open_outlined),
-                              border: InputBorder.none),
-                          keyboardType: TextInputType.emailAddress,
-                          obscureText: true,
-                          controller: _passwordTextController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return "The password field can not be empty";
-                            } else if (value.length < 6) {
-                              return "The password has to be at least 6 characters long";
-                            }
-                            return null;
-                          },
+                        child: ListTile(
+                          contentPadding: EdgeInsets.only(left: 0.0),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                                labelText: "password",
+                                icon: Icon(Icons.lock_open_outlined),
+                                border: InputBorder.none),
+                            keyboardType: TextInputType.emailAddress,
+                            obscureText: hidePassword,
+                            controller: _passwordTextController,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "The password field can not be empty";
+                              } else if (value.length < 6) {
+                                return "The password has to be at least 6 characters long";
+                              }
+                              return null;
+                            },
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.remove_red_eye),
+                            onPressed: () {
+                              setState(() {
+                                hidePassword = !hidePassword;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -218,14 +232,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       elevation: 0.0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12.0),
-                        child: TextFormField(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.only(left: 0.0),
+                          title: TextFormField(
                             decoration: InputDecoration(
                                 labelText: "Confirm Password",
                                 icon: Icon(Icons.lock_open_outlined),
                                 border: InputBorder.none),
                             keyboardType: TextInputType.emailAddress,
                             controller: _confirmPasswordTextController,
-                            obscureText: true,
+                            obscureText: hidePassword,
                             validator: (value) {
                               if (value != _passwordTextController.text) {
                                 return "Passwords entered don't match";
@@ -233,7 +249,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return "The password has to be at least 6 characters long";
                               }
                               return null;
-                            }),
+                            },
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.remove_red_eye),
+                            onPressed: () {
+                              setState(() {
+                                hidePassword = !hidePassword;
+                              });
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -252,7 +278,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       elevation: 0.0,
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width,
-                        onPressed: () {},
+                        onPressed: () {
+                          validateForm();
+                        },
                         child: Text(
                           "Sign up",
                           textAlign: TextAlign.center,
@@ -342,5 +370,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
         gender = value;
       }
     });
+  }
+
+  // VALIDATE FORM FUNCTION
+  void validateForm() async {
+    FormState formState = _formkey.currentState;
+
+    // IF TRUE, WE ARE GOING TO CREATE OUR USER
+    if (formState.validate()) {
+      // CHECK IF THE USER EXIST
+      User user = firebaseAuth.currentUser;
+      if (user == null) {
+        UserCredential createUser = await firebaseAuth
+            .createUserWithEmailAndPassword(
+          email: _emailTextController.text,
+          password: _passwordTextController.text,
+        )
+            .then((user) {
+          Map value = {};
+          _userServices.createUser(value);
+        });
+      }
+    }
   }
 }
