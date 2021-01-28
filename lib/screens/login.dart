@@ -23,27 +23,53 @@ class _LoginState extends State<Login> {
   SharedPreferences preferences;
   bool loading = false;
   bool isLogedIn = false;
+  bool userLogedIn = false;
 
   @override
   void initState() {
     super.initState();
-    // isSignedIn();
+    isSignedIn();
   }
 
-  void isSignedIn() async {
-    // CHANGE LOADING STATE TO TRUE
+  Future isSignedIn() async {
+    // // CHANGE LOADING STATE TO TRUE
     setState(() {
       loading = true;
     });
+
+    User user = firebaseAuth.currentUser;
+
+    if (user != null) {
+      print("user details ${user.toString()}");
+      setState(() {
+        userLogedIn = true;
+      });
+    }
 
     preferences = await SharedPreferences.getInstance();
     isLogedIn = await googleSignIn.isSignedIn();
 
     // CHECK WETHER USER IS LOGED IN
-    if (isLogedIn) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return HomePage();
-      }));
+    if (isLogedIn || userLogedIn) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return HomePage();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              var begin = Offset(1.1, 0.0);
+              var end = Offset.zero;
+              var tween = Tween(begin: begin, end: end);
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+            transitionDuration: Duration(milliseconds: 2000)),
+      );
     }
 
     // CHANGE LOADING STATE BACK TO FALSE
@@ -53,7 +79,6 @@ class _LoginState extends State<Login> {
   }
 
   // FUNTION RESPONSIBLE FOR EMAIL AND PASSWORD LOGIN
-  
 
   // FUNTION RESPONSIBLE FOR GOOGLE LOGIN
   void handlingSignIn() async {
@@ -80,7 +105,7 @@ class _LoginState extends State<Login> {
 
     // CREATE USER
     User user = userCredential.user;
-
+ 
     if (credential != null) {
       final QuerySnapshot result = await FirebaseFirestore.instance
           .collection("users")
@@ -90,10 +115,7 @@ class _LoginState extends State<Login> {
 
       // CHECK IF DOCUMENTS IS EMPTY
       if (documents.length == 0) {
-        await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user.uid)
-        .set({
+        await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
           "id": user.uid,
           "username": user.displayName,
           "profilePicture": user.photoURL
@@ -108,15 +130,35 @@ class _LoginState extends State<Login> {
         preferences.setString("username", documents[0]["username"]);
         preferences.setString("profilePicture", documents[0]["profilePicture"]);
       }
-    } else {}
+      // FLUTTER TOAST MESSAGE
+      Fluttertoast.showToast(msg: "Login Successful");
 
-    // SET LOADING STATE TO FALSE
-    setState(() {
-      loading = false;
-    });
-
-    // FLUTTER TOAST MESSAGE
-    Fluttertoast.showToast(msg: "Login Successful");
+      // SET LOADING STATE TO FALSE
+      setState(() {
+        loading = false;
+      });
+        Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return HomePage();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              var begin = Offset(1.1, 0.0);
+              var end = Offset.zero;
+              var tween = Tween(begin: begin, end: end);
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+            transitionDuration: Duration(milliseconds: 2000)),
+      );
+    } else {
+      Fluttertoast.showToast(msg: "Login failed");
+    }
   }
 
   @override

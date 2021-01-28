@@ -1,4 +1,5 @@
 import 'package:FashStore/components/database/user.dart';
+import 'package:FashStore/screens/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _nameTextController = TextEditingController();
   TextEditingController _confirmPasswordTextController =
       TextEditingController();
-  UserServices _userServices = UserServices();
   String gender;
   String groupValue = "male";
   bool hidePassword = true;
@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: Material(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withOpacity(0.8),
                       elevation: 0.0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12.0),
@@ -156,18 +156,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailTextController,
                           validator: (value) {
-                            Pattern pattern =
-                                r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-                            RegExp regex = new RegExp(pattern);
-                            print(value);
-                            if (value.isEmpty) {
-                              return 'Please enter email';
-                            } else {
-                              if (!regex.hasMatch(value))
-                                return 'Enter valid email';
-                              else
+                            if (value.isNotEmpty) {
+                              Pattern pattern =
+                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                              RegExp regex = RegExp(pattern);
+
+                              if (!regex.hasMatch(value)) {
+                                return "Enter a valid email address";
+                              } else {
                                 return null;
-                            }
+                              }
+                            } else
+                              return "Enter an email";
                           },
                         ),
                       ),
@@ -278,7 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       elevation: 0.0,
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width,
-                        onPressed: () {
+                        onPressed: () async {
                           validateForm();
                         },
                         child: Text(
@@ -373,24 +373,79 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   // VALIDATE FORM FUNCTION
-  void validateForm() async {
-    FormState formState = _formkey.currentState;
+  Future validateForm() async {
+    FormState _formState = _formkey.currentState;
+    UserServices _userServices = UserServices();
 
-    // IF TRUE, WE ARE GOING TO CREATE OUR USER
-    if (formState.validate()) {
-      // CHECK IF THE USER EXIST
+    // CHECK IF ALL FORM FIELDS ARE VALIDATED
+    if (_formState.validate()) {
+      // GET CURRENT USER
       User user = firebaseAuth.currentUser;
+      print(user.toString());
+
+      // CHECK IF USER ALREADY EXIST, IF FALSE SIGN THE USER UP
       if (user == null) {
-        UserCredential createUser = await firebaseAuth
+        print("i want to fuck helen");
+        await firebaseAuth
             .createUserWithEmailAndPassword(
-          email: _emailTextController.text,
-          password: _passwordTextController.text,
-        )
-            .then((user) {
-          Map value = {};
-          _userServices.createUser(value);
-        });
+              email: _emailTextController.text,
+              password: _passwordTextController.text,
+            )
+            .then((userValue) => {
+                  _userServices.createUser({
+                    "username": _nameTextController.text,
+                    "email": _emailTextController.text,
+                    "userId": userValue.user.uid,
+                    "gender": gender.toString()
+                  })
+                })
+            .catchError((e) => print(e.toString()));
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return HomePage();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              var begin = Offset(1.1, 0.0);
+              var end = Offset.zero;
+              var tween = Tween(begin: begin, end: end);
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition( 
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+            transitionDuration: Duration(milliseconds: 2000)),
+      );
       }
     }
   }
+  // void validateForm() async {
+  //   FormState formState = _formkey.currentState;
+
+  //   // IF TRUE, WE ARE GOING TO CREATE OUR USER
+  //   if (formState.validate()) {
+  //     // CHECK IF THE USER EXIST
+  //     User user = firebaseAuth.currentUser;
+  //     if (user == null) {
+  //       firebaseAuth
+  //           .createUserWithEmailAndPassword(
+  //               email: _emailTextController.text,
+  //               password: _passwordTextController.text)
+  //           .then(
+  //             (user) => {
+  //               _userServices.createUser(
+  //                 {
+  //                   "username": user.user.displayName,
+  //                   "email": user.user.email,
+  //                   "userId": user.user.uid
+  //                 },
+  //               )
+  //             },
+  //           );
+  //     }
+  //   }
+  // }
 }
