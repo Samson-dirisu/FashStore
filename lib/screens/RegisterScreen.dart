@@ -385,7 +385,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       // CHECK IF USER ALREADY EXIST, IF FALSE SIGN THE USER UP
       if (user == null) {
-        print("i want to fuck helen");
         await firebaseAuth
             .createUserWithEmailAndPassword(
               email: _emailTextController.text,
