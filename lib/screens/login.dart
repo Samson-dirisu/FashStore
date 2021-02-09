@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    isSignedIn();
+    //isSignedIn();
   }
 
   Future isSignedIn() async {
@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
       final QuerySnapshot result = await FirebaseFirestore.instance
           .collection("users")
           .where("id", isEqualTo: user.uid)
-          .get();
+           .get();
       List<QueryDocumentSnapshot> documents = result.docs;
 
       // CHECK IF DOCUMENTS IS EMPTY
