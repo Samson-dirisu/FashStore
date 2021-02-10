@@ -1,11 +1,9 @@
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/user_provider.dart';
 
 import 'RegisterScreen.dart';
 
@@ -15,154 +13,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final _formkey = GlobalKey<FormState>();
-  TextEditingController _emailTextController = TextEditingController();
-  TextEditingController _passwordTextController = TextEditingController();
-  SharedPreferences preferences;
-  bool loading = false;
-  bool isLogedIn = false;
-  bool userLogedIn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    //isSignedIn();
-  }
-
-  Future isSignedIn() async {
-    // // CHANGE LOADING STATE TO TRUE
-    setState(() {
-      loading = true;
-    });
-
-    User user = firebaseAuth.currentUser;
-
-    if (user != null) {
-      print("user details ${user.toString()}");
-      setState(() {
-        userLogedIn = true;
-      });
-    }
-
-    preferences = await SharedPreferences.getInstance();
-    isLogedIn = await googleSignIn.isSignedIn();
-
-    // CHECK WETHER USER IS LOGED IN
-    if (isLogedIn || userLogedIn) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return HomePage();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              var begin = Offset(1.1, 0.0);
-              var end = Offset.zero;
-              var tween = Tween(begin: begin, end: end);
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: Duration(milliseconds: 2000)),
-      );
-    }
-
-    // CHANGE LOADING STATE BACK TO FALSE
-    setState(() {
-      loading = false;
-    });
-  }
-
-  // FUNTION RESPONSIBLE FOR EMAIL AND PASSWORD LOGIN
-
-  // FUNTION RESPONSIBLE FOR GOOGLE LOGIN
-  void handlingSignIn() async {
-    preferences = await SharedPreferences.getInstance();
-
-    // SET LOADING STATE TO TRUE
-    setState(() {
-      loading = true;
-    });
-
-    // SIGN IN USER THROUGH GOOGLE
-    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleUser.authentication;
-
-    // AUTHENTICATE USER WITH TOKENS
-    AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken);
-
-    // USER CREDENTIAL FROM GOOGLE
-    UserCredential userCredential =
-        await firebaseAuth.signInWithCredential(credential);
-
-    // CREATE USER
-    User user = userCredential.user;
- 
-    if (credential != null) {
-      final QuerySnapshot result = await FirebaseFirestore.instance
-          .collection("users")
-          .where("id", isEqualTo: user.uid)
-           .get();
-      List<QueryDocumentSnapshot> documents = result.docs;
-
-      // CHECK IF DOCUMENTS IS EMPTY
-      if (documents.length == 0) {
-        await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
-          "id": user.uid,
-          "username": user.displayName,
-          "profilePicture": user.photoURL
-        });
-
-        // SAVE INFO TO LOCAL STORAGE
-        preferences.setString("id", user.uid);
-        preferences.setString("username", user.displayName);
-        preferences.setString("profilePicture", user.photoURL);
-      } else {
-        preferences.setString("id", documents[0]["id"]);
-        preferences.setString("username", documents[0]["username"]);
-        preferences.setString("profilePicture", documents[0]["profilePicture"]);
-      }
-      // FLUTTER TOAST MESSAGE
-      Fluttertoast.showToast(msg: "Login Successful");
-
-      // SET LOADING STATE TO FALSE
-      setState(() {
-        loading = false;
-      });
-        Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return HomePage();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              var begin = Offset(1.1, 0.0);
-              var end = Offset.zero;
-              var tween = Tween(begin: begin, end: end);
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: Duration(milliseconds: 2000)),
-      );
-    } else {
-      Fluttertoast.showToast(msg: "Login failed");
-    }
-  }
+  final _key = GlobalKey<ScaffoldState>();
+  TextEditingController _email = TextEditingController();
+  TextEditingController _password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
       // BODY
       body: Stack(
@@ -210,7 +68,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          controller: _emailTextController,
+                          controller: _email,
                           validator: (value) {
                             Pattern pattern =
                                 r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
@@ -250,7 +108,7 @@ class _LoginState extends State<Login> {
                             border: InputBorder.none,
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          controller: _passwordTextController,
+                          controller: _password,
                           obscureText: true,
                           validator: (value) {
                             if (value.isEmpty) {
@@ -279,7 +137,13 @@ class _LoginState extends State<Login> {
                       elevation: 0.0,
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width,
-                        onPressed: () {},
+                        onPressed: () async {
+                          if (_formkey.currentState.validate()) {
+                            if (!await user.signIn(_email.text, _password.text))
+                              _key.currentState.showSnackBar(
+                                  SnackBar(content: Text("Sign in failed")));
+                          }
+                        },
                         child: Text(
                           "Login",
                           textAlign: TextAlign.center,
@@ -302,9 +166,7 @@ class _LoginState extends State<Login> {
                       elevation: 0.0,
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width,
-                        onPressed: () {
-                          handlingSignIn();
-                        },
+                        onPressed: () {},
                         child: Text(
                           "Sign In with google",
                           textAlign: TextAlign.center,
@@ -350,7 +212,7 @@ class _LoginState extends State<Login> {
           ),
           // VISIBILITY WIDGET
           Visibility(
-            visible: loading ?? true,
+            visible: null,
             child: Container(
               alignment: Alignment.center,
               color: Colors.white.withOpacity(0.7),
@@ -364,57 +226,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-
-// Future handleSignIn() async {
-//     preferences = await SharedPreferences.getInstance();
-
-//     setState(() {
-//       loading = true;
-//     });
-
-//     GoogleSignInAccount googleUser = await googleSignIn.signIn();
-//     GoogleSignInAuthentication googleSignInAuthentication =
-//         await googleUser.authentication;
-//     final AuthCredential credential = GoogleAuthProvider.credential(
-//         accessToken: googleSignInAuthentication.accessToken,
-//         idToken: googleSignInAuthentication.idToken);
-
-//     UserCredential userCredential =
-//         await firebaseAuth.signInWithCredential(credential);
-//     final User firebaseUser = userCredential.user;
-
-//     if (credential != null) {
-//       // CHECK IF FIREBASEUSER HAS SIGNED UP
-//       final QuerySnapshot result = await FirebaseFirestore.instance
-//           .collection("users")
-//           .where("id", isEqualTo: firebaseUser.uid)
-//           .get();
-//       final List<DocumentSnapshot> documents = result.docs;
-
-//       // IF FIREBASE USER IS NOT INCLUDED WE SIGN IT UP
-//       if (documents.length == 0) {
-//         // INSERT THE USER TO OUR COLLECTION
-//         FirebaseFirestore.instance
-//             .collection("users")
-//             .doc(firebaseUser.uid)
-//             .set({
-//           "id": firebaseUser.uid,
-//           "username": firebaseUser.displayName,
-//           "profilePicture": firebaseUser.photoURL
-//         });
-
-//         await preferences.setString("id", firebaseUser.uid);
-//         await preferences.setString("username", firebaseUser.displayName);
-//         await preferences.setString("photoUrl", firebaseUser.photoURL);
-//       } else {
-//         await preferences.setString("id", documents[0]["id"]);
-//         await preferences.setString("username", documents[0]["username"]);
-//         await preferences.setString("photoUrl", documents[0]["photoUrl"]);
-//       }
-
-//       Fluttertoast.showToast(msg: "Login was successful");
-//       setState(() {
-//         loading = false;
-//       });
-//     } else {}
-//   }

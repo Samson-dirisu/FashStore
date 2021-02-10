@@ -69,5 +69,88 @@ class UserProvider with ChangeNotifier {
       _user = user;
       _status = Status.Authenticated;
     }
+    notifyListeners();
   }
 }
+
+
+
+// void handlingSignIn() async {
+//     preferences = await SharedPreferences.getInstance();
+
+//     // SET LOADING STATE TO TRUE
+//     setState(() {
+//       loading = true;
+//     });
+
+//     // SIGN IN USER THROUGH GOOGLE
+//     final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+//     final GoogleSignInAuthentication googleSignInAuthentication =
+//         await googleUser.authentication;
+
+//     // AUTHENTICATE USER WITH TOKENS
+//     AuthCredential credential = GoogleAuthProvider.credential(
+//         accessToken: googleSignInAuthentication.accessToken,
+//         idToken: googleSignInAuthentication.idToken);
+
+//     // USER CREDENTIAL FROM GOOGLE
+//     UserCredential userCredential =
+//         await firebaseAuth.signInWithCredential(credential);
+
+//     // CREATE USER
+//     User user = userCredential.user;
+ 
+//     if (credential != null) {
+//       final QuerySnapshot result = await FirebaseFirestore.instance
+//           .collection("users")
+//           .where("id", isEqualTo: user.uid)
+//            .get();
+//       List<QueryDocumentSnapshot> documents = result.docs;
+
+//       // CHECK IF DOCUMENTS IS EMPTY
+//       if (documents.length == 0) {
+//         await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+//           "id": user.uid,
+//           "username": user.displayName,
+//           "profilePicture": user.photoURL
+//         });
+
+//         // SAVE INFO TO LOCAL STORAGE
+//         preferences.setString("id", user.uid);
+//         preferences.setString("username", user.displayName);
+//         preferences.setString("profilePicture", user.photoURL);
+//       } else {
+//         preferences.setString("id", documents[0]["id"]);
+//         preferences.setString("username", documents[0]["username"]);
+//         preferences.setString("profilePicture", documents[0]["profilePicture"]);
+//       }
+//       // FLUTTER TOAST MESSAGE
+//       Fluttertoast.showToast(msg: "Login Successful");
+
+//       // SET LOADING STATE TO FALSE
+//       setState(() {
+//         loading = false;
+//       });
+//         Navigator.pushReplacement(
+//         context,
+//         PageRouteBuilder(
+//             pageBuilder: (context, animation, secondaryAnimation) {
+//               return HomePage();
+//             },
+//             transitionsBuilder:
+//                 (context, animation, secondaryAnimation, child) {
+//               var begin = Offset(1.1, 0.0);
+//               var end = Offset.zero;
+//               var tween = Tween(begin: begin, end: end);
+//               var offsetAnimation = animation.drive(tween);
+//               return SlideTransition(
+//                 position: offsetAnimation,
+//                 child: child,
+//               );
+//             },
+//             transitionDuration: Duration(milliseconds: 2000)),
+//       );
+//     } else {
+//       Fluttertoast.showToast(msg: "Login failed");
+//     }
+//   }

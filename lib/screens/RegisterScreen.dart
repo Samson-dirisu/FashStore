@@ -1,9 +1,8 @@
-import 'package:FashStore/components/database/user.dart';
-import 'package:FashStore/screens/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -11,22 +10,20 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final _formkey = GlobalKey<FormState>();
-  TextEditingController _emailTextController = TextEditingController();
-  TextEditingController _passwordTextController = TextEditingController();
-  TextEditingController _nameTextController = TextEditingController();
+  final _key = GlobalKey<ScaffoldState>();
+  TextEditingController _email = TextEditingController();
+  TextEditingController _password = TextEditingController();
+  TextEditingController _name = TextEditingController();
   TextEditingController _confirmPasswordTextController =
       TextEditingController();
-  String gender;
-  String groupValue = "male";
   bool hidePassword = true;
-
-  SharedPreferences preferences;
   bool loading = false;
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
+      key: _key,
       // BODY
       body: Stack(
         children: [
@@ -69,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             icon: Icon(Icons.person_outline),
                           ),
                           keyboardType: TextInputType.name,
-                          controller: _nameTextController,
+                          controller: _name,
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Please enter Full name';
@@ -106,10 +103,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               trailing: Radio(
                                 value: "male",
-                                groupValue: groupValue,
-                                onChanged: (value) {
-                                  valueChanged(value);
-                                },
+                                groupValue: "male",
+                                onChanged: (value) {},
                               ),
                             ),
                           ),
@@ -124,10 +119,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               trailing: Radio(
                                 value: "female",
-                                groupValue: groupValue,
-                                onChanged: (value) {
-                                  valueChanged(value);
-                                },
+                                groupValue: "female",
+                                onChanged: (value) {},
                               ),
                             ),
                           ),
@@ -154,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               icon: Icon(Icons.email),
                               border: InputBorder.none),
                           keyboardType: TextInputType.emailAddress,
-                          controller: _emailTextController,
+                          controller: _email,
                           validator: (value) {
                             if (value.isNotEmpty) {
                               Pattern pattern =
@@ -196,7 +189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 border: InputBorder.none),
                             keyboardType: TextInputType.emailAddress,
                             obscureText: hidePassword,
-                            controller: _passwordTextController,
+                            controller: _password,
                             validator: (value) {
                               if (value.isEmpty) {
                                 return "The password field can not be empty";
@@ -243,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: _confirmPasswordTextController,
                             obscureText: hidePassword,
                             validator: (value) {
-                              if (value != _passwordTextController.text) {
+                              if (value != _password.text) {
                                 return "Passwords entered don't match";
                               } else if (value.length < 6) {
                                 return "The password has to be at least 6 characters long";
@@ -279,7 +272,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width,
                         onPressed: () async {
-                          validateForm();
+                          if (_formkey.currentState.validate()) {
+                            if (!await user.signUp(
+                                _name.text, _email.text, _password.text))
+                              _key.currentState.showSnackBar(
+                                  SnackBar(content: Text("Sign in failed")));
+                          }
                         },
                         child: Text(
                           "Sign up",
@@ -360,67 +358,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void valueChanged(value) {
-    setState(() {
-      if (value == "male") {
-        groupValue = value;
-        gender = value;
-      } else if (value == "female") {
-        groupValue = value;
-        gender = value;
-      }
-    });
-  }
-
-  // VALIDATE FORM FUNCTION
-  Future validateForm() async {
-    FormState _formState = _formkey.currentState;
-    UserServices _userServices = UserServices();
-
-    // CHECK IF ALL FORM FIELDS ARE VALIDATED
-    if (_formState.validate()) {
-      // GET CURRENT USER
-      User user = firebaseAuth.currentUser;
-      print(user.toString());
-
-      // CHECK IF USER ALREADY EXIST, IF FALSE SIGN THE USER UP
-      if (user == null) {
-        await firebaseAuth
-            .createUserWithEmailAndPassword(
-              email: _emailTextController.text,
-              password: _passwordTextController.text,
-            )
-            .then((userValue) => {
-                  _userServices.createUser({
-                    "username": _nameTextController.text,
-                    "email": _emailTextController.text,
-                    "userId": userValue.user.uid,
-                    "gender": gender.toString()
-                  })
-                })
-            .catchError((e) => print(e.toString()));
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return HomePage();
-            },
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              var begin = Offset(1.1, 0.0);
-              var end = Offset.zero;
-              var tween = Tween(begin: begin, end: end);
-              var offsetAnimation = animation.drive(tween);
-              return SlideTransition( 
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: Duration(milliseconds: 2000)),
-      );
-      }
-    }
-  }
   // void validateForm() async {
   //   FormState formState = _formkey.currentState;
 
