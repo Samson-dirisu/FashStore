@@ -27,7 +27,7 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
-      print(e.toString());
+      print( e.toString());
       return false;
     }
   }
@@ -73,8 +73,6 @@ class UserProvider with ChangeNotifier {
   }
 }
 
-
-
 // void handlingSignIn() async {
 //     preferences = await SharedPreferences.getInstance();
 
@@ -99,7 +97,7 @@ class UserProvider with ChangeNotifier {
 
 //     // CREATE USER
 //     User user = userCredential.user;
- 
+
 //     if (credential != null) {
 //       final QuerySnapshot result = await FirebaseFirestore.instance
 //           .collection("users")

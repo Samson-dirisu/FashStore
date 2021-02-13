@@ -1,10 +1,12 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 
 //MY OWN IMPORTS
 import 'package:FashStore/components/horizontal_listview.dart';
+import 'package:provider/provider.dart';
 
 import 'cart_page.dart';
 
@@ -16,6 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     Widget imageCarousel = Container(
       height: 200,
       child: Carousel(
@@ -127,13 +130,13 @@ class _HomePageState extends State<HomePage> {
               ),
               onTap: () {
                 Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) {
-                    return CartPage();
-                  },
-                ),
-              );
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return CartPage();
+                    },
+                  ),
+                );
               },
             ),
             InkWell(
@@ -145,6 +148,16 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.favorite, color: Colors.red),
               ),
               onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                "Log out",
+                style: TextStyle(color: headingColor),
+              ),
+              leading: Icon(Icons.backspace_sharp, color: Colors.red),
+              onTap: () {
+                user.signOut();
+              },
             ),
 
             Divider(),
@@ -195,7 +208,7 @@ class _HomePageState extends State<HomePage> {
 
           // STARTING OF PADDING WIDGET
           Padding(
-            padding: EdgeInsets.only(top : 20.0, bottom: 10, left: 8.0),
+            padding: EdgeInsets.only(top: 20.0, bottom: 10, left: 8.0),
             child: Text(
               "Recent Products",
               style:
@@ -204,7 +217,7 @@ class _HomePageState extends State<HomePage> {
           ),
 
           // GRID VIEW BEGINS HERE
-          Flexible( child: Products()),
+          Flexible(child: Products()),
         ],
       ),
     );

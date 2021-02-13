@@ -16,60 +16,6 @@ class _ProductsState extends State<Products> {
       "old price": 2000,
       "price": 1800
     },
-    {
-      "name": "Female Blazer",
-      "picture": "images/products/blazer2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Red dress",
-      "picture": "images/products/dress1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Black dress",
-      "picture": "images/products/dress2.jpeg",
-     "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": " heels",
-      "picture": "images/products/hills1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Red heels",
-      "picture": "images/products/hills2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Black Pant",
-      "picture": "images/products/pants1.jpg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Grey Pant",
-      "picture": "images/products/pants2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Shoe",
-      "picture": "images/products/shoe1.jpg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Skirt",
-      "picture": "images/products/skt1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    }
   ];
   @override
   Widget build(BuildContext context) {
@@ -79,13 +25,15 @@ class _ProductsState extends State<Products> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, crossAxisSpacing: 1),
       itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: SingleProd(
-            productName: productList[index]['name'],
-            productOldPrice: productList[index]['old price'],
-            productPicture: productList[index]['picture'],
-            productPrice: productList[index]['price'],
+        return Container(
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: SingleProd(
+              productName: productList[index]['name'],
+              productOldPrice: productList[index]['old price'],
+              productPicture: productList[index]['picture'],
+              productPrice: productList[index]['price'],
+            ),
           ),
         );
       },

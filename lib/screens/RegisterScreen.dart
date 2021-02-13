@@ -1,4 +1,5 @@
 
+import 'package:FashStore/components/loading.dart';
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       key: _key,
       // BODY
-      body: Stack(
+      body: user.status == Status.Authenticating ? Loading() : Stack(
         children: [
           // BACKDROP IMAGE
           Container(
@@ -79,55 +80,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
 
                   // GENDER SELECTION
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8.0,
-                      right: 8.0,
-                      top: 15.0,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: Text(
-                                "male",
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  color: Color(0xff444444),
-                                ),
-                              ),
-                              trailing: Radio(
-                                value: "male",
-                                groupValue: "male",
-                                onChanged: (value) {},
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              title: Text(
-                                "female",
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  color: Color(0xff444444),
-                                ),
-                              ),
-                              trailing: Radio(
-                                value: "female",
-                                groupValue: "female",
-                                onChanged: (value) {},
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(
+                  //     left: 8.0,
+                  //     right: 8.0,
+                  //     top: 15.0,
+                  //   ),
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(10.0),
+                  //       color: Colors.white.withOpacity(0.8),
+                  //     ),
+                  //     child: Row(
+                  //       children: [
+                  //         Expanded(
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               "male",
+                  //               textAlign: TextAlign.end,
+                  //               style: TextStyle(
+                  //                 color: Color(0xff444444),
+                  //               ),
+                  //             ),
+                  //             trailing: Radio(
+                  //               value: "male",
+                  //               groupValue: "male",
+                  //               onChanged: (value) {},
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         Expanded(
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               "female",
+                  //               textAlign: TextAlign.end,
+                  //               style: TextStyle(
+                  //                 color: Color(0xff444444),
+                  //               ),
+                  //             ),
+                  //             trailing: Radio(
+                  //               value: "female",
+                  //               groupValue: "female",
+                  //               onChanged: (value) {},
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   // EMAIL TEXT FORM FIELD
                   Padding(
                     padding: const EdgeInsets.only(
@@ -277,6 +278,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 _name.text, _email.text, _password.text))
                               _key.currentState.showSnackBar(
                                   SnackBar(content: Text("Sign in failed")));
+                          } else {
+                            
                           }
                         },
                         child: Text(
@@ -342,17 +345,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
-          // VISIBILITY WIDGET
-          Visibility(
-            visible: loading ?? true,
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.white.withOpacity(0.7),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-              ),
-            ),
-          ),
+         
         ],
       ),
     );
