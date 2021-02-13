@@ -1,3 +1,4 @@
+import 'package:FashStore/components/loading.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,9 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
     return Scaffold(
+      key: _key,
       // BODY
-      body: Stack(
+      body: user.status == Status.Authenticating ? Loading() :  Stack(
         children: [
           // BACKDROP IMAGE
           Container(
@@ -70,18 +72,18 @@ class _LoginState extends State<Login> {
                           keyboardType: TextInputType.emailAddress,
                           controller: _email,
                           validator: (value) {
-                            Pattern pattern =
-                                r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-                            RegExp regex = new RegExp(pattern);
-                            print(value);
-                            if (value.isEmpty) {
-                              return 'Please enter email';
-                            } else {
-                              if (!regex.hasMatch(value))
-                                return 'Enter valid email';
-                              else
+                            if (value.isNotEmpty) {
+                              Pattern pattern =
+                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                              RegExp regex = RegExp(pattern);
+
+                              if (!regex.hasMatch(value)) {
+                                return "Enter a valid email address";
+                              } else {
                                 return null;
-                            }
+                              }
+                            } else
+                              return "Enter an email";
                           },
                         ),
                       ),
@@ -207,17 +209,6 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-          // VISIBILITY WIDGET
-          Visibility(
-            visible: null,
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.white.withOpacity(0.7),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
               ),
             ),
           ),
