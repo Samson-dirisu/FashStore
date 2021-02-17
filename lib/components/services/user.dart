@@ -1,3 +1,4 @@
+import 'package:FashStore/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -16,11 +17,17 @@ class UserServicess {
       };
 }
 
-class UserService {
+class UserServices {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String collection = "users";
 
   void createUser(Map data) {
-    _firestore.collection(collection).doc(data['userId']).set(data);
+    _firestore.collection(collection).doc(data['uid']).set(data);
   }
+
+  Future<UserModel> getUserById(String id) => _firestore
+      .collection(collection)
+      .doc(id)
+      .get()
+      .then((snapshot) => UserModel.fromSnapshot(snapshot));
 }

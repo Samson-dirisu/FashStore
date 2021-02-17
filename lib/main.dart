@@ -1,3 +1,4 @@
+
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:FashStore/screens/login.dart';
@@ -10,8 +11,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => UserProvider.initialize(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: UserProvider.initialize()),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
