@@ -2,19 +2,13 @@ import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:FashStore/models/product/product.dart';
 
 class ProductDetails extends StatefulWidget {
-  final String productDetailName;
-  final int productDetailNewPrice;
-  final int productDetailOldPrice;
-  final String productDetailPicture;
+  final ProductModel product;
 
   // CONSTRUCTOR
-  ProductDetails(
-      {this.productDetailName,
-      this.productDetailNewPrice,
-      this.productDetailOldPrice,
-      this.productDetailPicture});
+  ProductDetails({this.product});
 
   @override
   _ProductDetailsState createState() => _ProductDetailsState();
@@ -64,7 +58,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 child: GridTile(
                   child: Container(
                     color: Colors.white,
-                    child: Image.asset(widget.productDetailPicture),
+                    child: Image.network(widget.product.images[0]),
                   ),
 
                   //FOOTER
@@ -76,7 +70,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         width: 100.0,
                         alignment: Alignment.center,
                         child: Text(
-                          widget.productDetailName,
+                          widget.product.name,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
@@ -88,7 +82,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         children: [
                           Expanded(
                             child: Text(
-                              "#${widget.productDetailOldPrice}",
+                              "0900",
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
@@ -98,7 +92,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),
                           Expanded(
                             child: Text(
-                              "#${widget.productDetailNewPrice}",
+                              "#${widget.product.price}",
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
@@ -303,10 +297,12 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Text(widget.productDetailName, 
-                style: TextStyle(
-                  color: primaryColor,
-                ),),
+                child: Text(
+                  widget.product.name,
+                  style: TextStyle(
+                    color: primaryColor,
+                  ),
+                ),
               ),
             ],
           ),
@@ -329,9 +325,12 @@ class _ProductDetailsState extends State<ProductDetails> {
               //TODO: Remember to create product brand
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Text("Brand x", style: TextStyle(
-                  color: primaryColor,
-                ),),
+                child: Text(
+                  "Brand x",
+                  style: TextStyle(
+                    color: primaryColor,
+                  ),
+                ),
               ),
             ],
           ),
@@ -352,9 +351,12 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Text("New", style: TextStyle(
-                  color: primaryColor,
-                ),),
+                child: Text(
+                  "New",
+                  style: TextStyle(
+                    color: primaryColor,
+                  ),
+                ),
               ),
             ],
           ),
@@ -417,7 +419,7 @@ class _SimilarProductsState extends State<SimilarProducts> {
     {
       "name": "Red heels",
       "picture": "images/products/hills2.jpeg",
-     "old price": 2000,
+      "old price": 2000,
       "price": 1800
     },
     {
@@ -441,7 +443,7 @@ class _SimilarProductsState extends State<SimilarProducts> {
     {
       "name": "Skirt",
       "picture": "images/products/skt1.jpeg",
-     "old price": 2000,
+      "old price": 2000,
       "price": 1800
     }
   ];
@@ -453,12 +455,7 @@ class _SimilarProductsState extends State<SimilarProducts> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, crossAxisSpacing: 1),
       itemBuilder: (BuildContext context, int index) {
-        return SingleProd(
-          productName: productList[index]['name'],
-          productOldPrice: productList[index]['old price'],
-          productPicture: productList[index]['picture'],
-          productPrice: productList[index]['price'],
-        );
+        return SingleProd();
       },
     );
   }

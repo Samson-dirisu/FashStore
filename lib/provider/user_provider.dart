@@ -1,7 +1,8 @@
+import 'package:FashStore/components/services/user.dart';
+import 'package:FashStore/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:FashStore/components/database/user.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
@@ -9,7 +10,8 @@ class UserProvider with ChangeNotifier {
   FirebaseAuth _auth;
   User _user;
   Status _status = Status.Uninitialized;
-  UserService _userService = UserService();
+  UserServices _userService = UserServices();
+  UserModel _userModel;
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -17,7 +19,9 @@ class UserProvider with ChangeNotifier {
 
   Status get status => _status;
   User get user => _user;
+  UserModel get userModel => _userModel;
 
+  // SIGN IN METHOD
   Future<bool> signIn(String email, String password) async {
     try {
       _status = Status.Authenticating;
@@ -27,11 +31,12 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
-      print( e.toString());
+      print(e.toString());
       return false;
     }
   }
-
+  
+  // SIGN UP METHOD
   Future<bool> signUp(String name, String email, String password) async {
     try {
       _status = Status.Authenticating;
@@ -42,7 +47,8 @@ class UserProvider with ChangeNotifier {
         Map<String, dynamic> values = {
           "name": name,
           "email": email,
-          "userId": user.uid
+          "uId": value.user.uid,
+          "stripeId": ''
         };
         _userService.createUser(values);
       });
@@ -54,19 +60,22 @@ class UserProvider with ChangeNotifier {
       return false;
     }
   }
-
-  Future signOut() async {
+  
+  // SIGN OUT METHOD
+  Future signOut() {
     _auth.signOut();
     _status = Status.Unauthenticated;
     notifyListeners();
     return Future.delayed(Duration.zero);
   }
-
+  
+  // ON STATE CHANGED METHOD
   Future<void> _onStateChanged(User user) async {
     if (user == null) {
       _status = Status.Unauthenticated;
     } else {
       _user = user;
+      _userModel = await _userService.getUserById(user.uid);
       _status = Status.Authenticated;
     }
     notifyListeners();

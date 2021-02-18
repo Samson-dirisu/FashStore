@@ -1,5 +1,6 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -18,7 +19,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
+
     Widget imageCarousel = Container(
       height: 200,
       child: Carousel(
@@ -156,7 +159,7 @@ class _HomePageState extends State<HomePage> {
               ),
               leading: Icon(Icons.backspace_sharp, color: Colors.red),
               onTap: () {
-                user.signOut();
+                userProvider.signOut();
               },
             ),
 

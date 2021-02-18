@@ -1,5 +1,8 @@
+import 'package:FashStore/models/product/product.dart';
+import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/screens/product_details.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'constants.dart';
 
@@ -9,32 +12,18 @@ class Products extends StatefulWidget {
 }
 
 class _ProductsState extends State<Products> {
-  var productList = [
-    {
-      "name": "Male Blazer",
-      "picture": "images/products/blazer1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-  ];
   @override
   Widget build(BuildContext context) {
+    final ProductProvider productProvider = Provider.of<ProductProvider> (context);
     return GridView.builder(
       padding: EdgeInsets.only(bottom: 15.0),
-      itemCount: productList.length,
+      itemCount: productProvider.products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, crossAxisSpacing: 1),
       itemBuilder: (BuildContext context, int index) {
-        return Container(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: SingleProd(
-              productName: productList[index]['name'],
-              productOldPrice: productList[index]['old price'],
-              productPicture: productList[index]['picture'],
-              productPrice: productList[index]['price'],
-            ),
-          ),
+        return Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: SingleProd(product: productProvider.products[index]),
         );
       },
     );
@@ -42,17 +31,10 @@ class _ProductsState extends State<Products> {
 }
 
 class SingleProd extends StatelessWidget {
-  final String productName;
-  final String productPicture;
-  final int  productOldPrice;
-  final int  productPrice;
+  final ProductModel product;
 
-  // CONSTRUCTOR
-  SingleProd(
-      {this.productName,
-      this.productOldPrice,
-      this.productPicture,
-      this.productPrice});
+  const SingleProd({Key key, this.product}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -69,12 +51,7 @@ class SingleProd extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) {
                       // HERE WE ARE PASSING INFO FROM HOMEPAGE TO PRODUCT DETAIL PAGE
-                      return ProductDetails(
-                        productDetailName: productName,
-                        productDetailNewPrice: productPrice,
-                        productDetailOldPrice: productOldPrice,
-                        productDetailPicture: productPicture,
-                      );
+                      return ProductDetails();
                     },
                   ),
                 );
@@ -89,7 +66,7 @@ class SingleProd extends StatelessWidget {
                       alignment: Alignment.center,
                       width: 70.0,
                       child: Text(
-                        productName,
+                        product.name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: headingColor,
@@ -97,14 +74,14 @@ class SingleProd extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                     productPrice.toString(),
+                      product.price.toString(),
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.w800),
                     ),
                   ),
                 ),
-                child: Image.asset(
-                  productPicture,
+                child: Image.network(
+                  product.images[0],
                   fit: BoxFit.cover,
                 ),
               ),
