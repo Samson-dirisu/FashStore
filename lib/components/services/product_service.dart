@@ -1,6 +1,5 @@
 import 'package:FashStore/models/product/product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
 
 class ProductService {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -14,4 +13,23 @@ class ProductService {
         }
         return products;
       });
+  
+  // search function
+  Future<List<ProductModel>> searchProducts({String productName}) {
+    // code to convert the first character to uppercase
+    String searchKey = productName[0].toUpperCase() + productName.substring(1);
+    return _firestore
+        .collection(collection)
+        .orderBy("name")
+        .startAt([searchKey])
+        .endAt([searchKey + '\uf8ff'])
+        .get()
+        .then((snapshot) {
+          List<ProductModel> products = [];
+          for (DocumentSnapshot result in snapshot.docs) {
+            products.add(ProductModel.fromSnapshot(result));
+          }
+          return products;
+        });
+  }
 }

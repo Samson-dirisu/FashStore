@@ -62,7 +62,7 @@ class UserProvider with ChangeNotifier {
   }
   
   // SIGN OUT METHOD
-  Future signOut() async {
+  Future signOut() {
     _auth.signOut();
     _status = Status.Unauthenticated;
     notifyListeners();
