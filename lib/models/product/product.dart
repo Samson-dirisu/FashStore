@@ -10,10 +10,12 @@ class ProductModel {
   static const SIZES = "sizes";
   static const FEATURED = "featured";
   static const IMAGES = "images";
+  static const CATEGORY = "category";
 
   String _id;
   String _name;
   String _brand;
+  String _category;
   int _price;
   int _quantity;
   List<String> _colors;
@@ -24,6 +26,7 @@ class ProductModel {
   String get id => _id;
   String get name => _name;
   String get brand => _brand;
+  String get category => _category;
   int get price => _price;
   int get quantity => _quantity;
   List<String> get colors => _colors;
@@ -38,6 +41,7 @@ class ProductModel {
     _price = data[PRICE];
     _quantity = data[QUANTITY];
     _brand = data[BRAND];
+    _category = data[CATEGORY];
     _colors = data[COLORS];
     _sizes = data[SIZES];
     _featured = data[FEATURED];

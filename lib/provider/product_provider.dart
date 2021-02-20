@@ -6,6 +6,7 @@ class ProductProvider with ChangeNotifier {
   ProductService _productService = ProductService();
   List<ProductModel> products = [];
   List<ProductModel> productsSearched = [];
+  List<ProductModel> similarProducts = [];
 
   ProductProvider.initialize() {
     loadProducts();
@@ -19,6 +20,11 @@ class ProductProvider with ChangeNotifier {
   Future search({String productName}) async {
     productsSearched =
         await _productService.searchProducts(productName: productName);
+    notifyListeners();
+  }
+
+  Future sameProducts({ProductModel category}) async {
+    similarProducts = await _productService.getSimilarProduct(category.category);
     notifyListeners();
   }
 }
