@@ -20,7 +20,7 @@ class _CartPageState extends State<CartPage> {
           IconButton(
             icon: Icon(
               Icons.search,
-              color: Colors.white,
+              color: Colors.red,
             ),
             onPressed: () {},
           ),
