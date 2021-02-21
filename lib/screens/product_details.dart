@@ -1,8 +1,10 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:FashStore/models/product/product.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetails extends StatefulWidget {
   final ProductModel product;
@@ -17,6 +19,8 @@ class ProductDetails extends StatefulWidget {
 class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
+    final ProductProvider provider = Provider.of<ProductProvider>(context);
+    provider.sameProducts(category: widget.product);
     return Scaffold(
       // APPBAR
       appBar: AppBar(
@@ -51,57 +55,51 @@ class _ProductDetailsState extends State<ProductDetails> {
           Container(
             height: 300,
             color: Colors.black,
-            child: Hero(
-              tag: Text("Hero 1"),
-              child: Material(
-                // GRIDTILE STARTS HERE
-                child: GridTile(
-                  child: Container(
-                    color: Colors.white,
-                    child: Image.network(widget.product.images[0]),
-                  ),
+            child: GridTile(
+              child: Container(
+                color: Colors.white,
+                child: Image.network(widget.product.images[0]),
+              ),
 
-                  //FOOTER
-                  footer: Container(
-                    color: Colors.white38,
-                    child: ListTile(
-                      contentPadding: EdgeInsets.only(left: 0),
-                      leading: Container(
-                        width: 100.0,
-                        alignment: Alignment.center,
+              //FOOTER
+              footer: Container(
+                color: Colors.white38,
+                child: ListTile(
+                  contentPadding: EdgeInsets.only(left: 0),
+                  leading: Container(
+                    width: 100.0,
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.product.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.0,
+                        color: headingColor,
+                      ),
+                    ),
+                  ),
+                  title: Row(
+                    children: [
+                      Expanded(
                         child: Text(
-                          widget.product.name,
+                          "0900",
                           style: TextStyle(
+                            color: Colors.grey,
                             fontWeight: FontWeight.bold,
-                            fontSize: 15.0,
-                            color: headingColor,
+                            decoration: TextDecoration.lineThrough,
                           ),
                         ),
                       ),
-                      title: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "0900",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
+                      Expanded(
+                        child: Text(
+                          "#${widget.product.price}",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Expanded(
-                            child: Text(
-                              "#${widget.product.price}",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -326,7 +324,7 @@ class _ProductDetailsState extends State<ProductDetails> {
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  "Brand x",
+                  "${widget.product.brand}",
                   style: TextStyle(
                     color: primaryColor,
                   ),
@@ -372,7 +370,11 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
             ),
           ),
-          Container(height: 360.0, child: SimilarProducts())
+          Container(
+              height: 360.0,
+              child: SimilarProducts(
+                products: provider.similarProducts,
+              ))
         ],
       ),
     );
@@ -380,155 +382,27 @@ class _ProductDetailsState extends State<ProductDetails> {
 }
 
 class SimilarProducts extends StatefulWidget {
+  final List<ProductModel> products;
+
+  const SimilarProducts({Key key, this.products}) : super(key: key);
   @override
   _SimilarProductsState createState() => _SimilarProductsState();
 }
 
 class _SimilarProductsState extends State<SimilarProducts> {
-  var productList = [
-    {
-      "name": "Male Blazer",
-      "picture": "images/products/blazer1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Female Blazer",
-      "picture": "images/products/blazer2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Red dress",
-      "picture": "images/products/dress1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Black dress",
-      "picture": "images/products/dress2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": " heels",
-      "picture": "images/products/hills1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Red heels",
-      "picture": "images/products/hills2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Black Pant",
-      "picture": "images/products/pants1.jpg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Grey Pant",
-      "picture": "images/products/pants2.jpeg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Shoe",
-      "picture": "images/products/shoe1.jpg",
-      "old price": 2000,
-      "price": 1800
-    },
-    {
-      "name": "Skirt",
-      "picture": "images/products/skt1.jpeg",
-      "old price": 2000,
-      "price": 1800
-    }
-  ];
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       padding: EdgeInsets.only(bottom: 15.0),
-      itemCount: productList.length,
+      itemCount: widget.products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, crossAxisSpacing: 1),
       itemBuilder: (BuildContext context, int index) {
-        return SingleProd();
+        if (widget.products != null) {
+          return SingleProd(product: widget.products[index]);
+        } else
+          return Text("no similar category found");
       },
-    );
-  }
-}
-
-class SimilarSingleProd extends StatelessWidget {
-  final productName;
-  final productPicture;
-  final productOldPrice;
-  final productPrice;
-
-  // CONSTRUCTOR
-  SimilarSingleProd(
-      {this.productName,
-      this.productOldPrice,
-      this.productPicture,
-      this.productPrice});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Card(
-        elevation: 3,
-        child: Hero(
-          tag: Text("Hero 1"),
-          child: Material(
-            child: InkWell(
-              // ONTAP FUNCTION
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      // HERE WE ARE PASSING INFO FROM HOMEPAGE TO PRODUCT DETAIL PAGE
-                      return ProductDetails(
-                        productDetailName: productName,
-                        productDetailNewPrice: productPrice,
-                        productDetailOldPrice: productOldPrice,
-                        productDetailPicture: productPicture,
-                      );
-                    },
-                  ),
-                );
-              },
-
-              // STARTING OF GRIDTILE
-              child: GridTile(
-                footer: Container(
-                  color: Colors.white38,
-                  child: ListTile(
-                    leading: Container(
-                      alignment: Alignment.center,
-                      width: 70.0,
-                      child: Text(
-                        productName,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    title: Text(
-                      "\#$productPrice",
-                      style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ),
-                child: Image.asset(
-                  productPicture,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

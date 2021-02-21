@@ -32,4 +32,18 @@ class ProductService {
           return products;
         });
   }
+
+  Future<List<ProductModel>> getSimilarProduct(String category) {
+   return _firestore
+      .collection(collection)
+      .where("category", isEqualTo: category)
+      .get()
+      .then((snapshot) {
+        List<ProductModel> products = [];
+        for (DocumentSnapshot item in snapshot.docs) {
+          products.add(ProductModel.fromSnapshot(item));
+        }
+        return products;
+      });
+  }
 }
