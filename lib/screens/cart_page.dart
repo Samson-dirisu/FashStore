@@ -54,13 +54,15 @@ class _CartPageState extends State<CartPage> {
 
             // CHECKOUT BUTTON
             Expanded(
-              child: MaterialButton(
-                color: Colors.pink,
-                onPressed: () {},
-                child: Text(
-                  "Check out",
-                  style: TextStyle(
-                    color: Colors.white,
+              child: Container(
+                child: MaterialButton(
+                  color: Colors.pink,
+                  onPressed: () {},
+                  child: Text(
+                    "Check out",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
