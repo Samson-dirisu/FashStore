@@ -8,22 +8,7 @@ class CartProducts extends StatefulWidget {
 
 class _CartProductsState extends State<CartProducts> {
   var productsOnCart = [
-    {
-      "name": "Male Blazer",
-      "picture": "images/products/blazer1.jpeg",
-      "price": "1800",
-      "size": "M",
-      "color": "Red",
-      "Quantity": 1,
-    },
-    {
-      "name": "Female Blazer",
-      "picture": "images/products/blazer2.jpeg",
-      "price": "1800",
-      "size": "M",
-      "color": "Black",
-      "Quantity": 1,
-    },
+    
     {
       "name": "Red dress",
       "picture": "images/products/dress1.jpeg",
@@ -129,28 +114,6 @@ class SingleCartProduct extends StatelessWidget {
                 ),
               ),
             )
-          ],
-        ),
-
-//    ========= THIS SECTION IS FOR THE QUANTITY OF THE PRODUCT =======
-        trailing: Column(
-          children: [
-            Expanded(
-              child: InkWell(
-                child: Icon(Icons.arrow_drop_up),
-                onTap: () {},
-              ),
-            ),
-            Expanded(child: Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Text("$cartProductQuantity"),
-            )),
-            Expanded(
-              child: InkWell(
-                child: Icon(Icons.arrow_drop_down),
-                onTap: (){},
-              ),
-            ),
           ],
         ),
       ),

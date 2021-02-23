@@ -1,3 +1,4 @@
+import 'package:FashStore/models/cart_item.dart';
 import 'package:FashStore/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -30,4 +31,12 @@ class UserServices {
       .doc(id)
       .get()
       .then((snapshot) => UserModel.fromSnapshot(snapshot));
+
+  void addToCart({String userId, CartItemModel cartItemModel}) {
+    _firestore.collection(collection).doc(userId).update(cartItemModel.toMap());
+  }
+
+  void removeFromCart({String userId}) {
+    _firestore.collection(collection).doc(userId).delete();
+  }
 }
