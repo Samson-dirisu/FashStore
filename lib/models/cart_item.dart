@@ -8,19 +8,17 @@ class CartItemModel {
   static const SIZE = "size";
 
   String _id;
-  String _image;
+  List _image;
   String _name;
   String _productId;
   String _size;
-  int _quantity;
   int _price;
 
   String get id => _id;
-  String get image => _image;
+  List get image => _image;
   String get name => _name;
   String get productId => _productId;
   String get size => _size;
-  int get quantity => _quantity;
   int get price => _price;
 
   CartItemModel.fromMap(Map data) {
@@ -29,7 +27,6 @@ class CartItemModel {
     _name = data[NAME];
     _size = data[SIZE];
     _productId = data[PRODUCT_ID];
-    _quantity = data[QUANTITY];
     _price = data[PRICE];
   }
 
@@ -39,7 +36,6 @@ class CartItemModel {
         NAME: _name,
         SIZE: _size,
         PRODUCT_ID: _productId,
-        QUANTITY: _quantity,
         PRICE: _price
       };
 }

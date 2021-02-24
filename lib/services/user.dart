@@ -33,10 +33,14 @@ class UserServices {
       .then((snapshot) => UserModel.fromSnapshot(snapshot));
 
   void addToCart({String userId, CartItemModel cartItemModel}) {
-    _firestore.collection(collection).doc(userId).update(cartItemModel.toMap());
+    _firestore.collection(collection).doc(userId).update({
+      "cart": FieldValue.arrayUnion([cartItemModel.toMap()])
+    });
   }
 
-  void removeFromCart({String userId}) {
-    _firestore.collection(collection).doc(userId).delete();
+  void removeFromCart({String userId, CartItemModel cartItemModel}) {
+    _firestore.collection(collection).doc(userId).update({
+      "cart": FieldValue.arrayRemove([cartItemModel.toMap()])
+    });
   }
 }

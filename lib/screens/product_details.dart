@@ -1,9 +1,12 @@
 import 'package:FashStore/components/constants.dart';
+import 'package:FashStore/components/loading.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/provider/app_provider.dart';
 import 'package:FashStore/provider/product_provider.dart';
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:FashStore/models/product/product.dart';
+import 'package:FashStore/models/product.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -17,6 +20,7 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
+  final _key = GlobalKey<ScaffoldState>();
   String _size = '';
   @override
   void initState() {
@@ -27,9 +31,12 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     final ProductProvider provider = Provider.of<ProductProvider>(context);
+    final AppProvider appProvider = Provider.of<AppProvider>(context);
+    final UserProvider userProvider = Provider.of<UserProvider>(context);
     provider.sameProducts(category: widget.product);
 
     return Scaffold(
+      key: _key,
       // APPBAR
       appBar: AppBar(
         elevation: 0.1,
@@ -148,10 +155,29 @@ class _ProductDetailsState extends State<ProductDetails> {
               Expanded(
                 child: MaterialButton(
                     elevation: 0.4,
-                    onPressed: () {},
+                    minWidth: MediaQuery.of(context).size.width,
+                    onPressed: () async {
+                      appProvider.changeLoading();
+                      bool success = await userProvider.addToCart(
+                          product: widget.product, size: _size);
+                      if (success) {
+                        _key.currentState.showSnackBar(
+                            SnackBar(content: Text("Added to Cart")));
+                        userProvider.reloadUserModel();
+                        appProvider.changeLoading();
+                        return;
+                      } else {
+                        _key.currentState.showSnackBar(
+                            SnackBar(content: Text("Not added to Cart")));
+                      }
+                      appProvider.changeLoading();
+                      return;
+                    },
                     color: Colors.pink,
                     textColor: Colors.white,
-                    child: Text("Add to Cart")),
+                    child: appProvider.isLoading
+                        ? Loading()
+                        : Text("Add to Cart")),
               ),
 
               // LIKE BUTTON

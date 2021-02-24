@@ -1,8 +1,11 @@
-import 'package:FashStore/components/services/user.dart';
+import 'package:FashStore/models/cart_item.dart';
+import 'package:FashStore/models/product.dart';
 import 'package:FashStore/models/user.dart';
+import 'package:FashStore/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
@@ -35,7 +38,7 @@ class UserProvider with ChangeNotifier {
       return false;
     }
   }
-  
+
   // SIGN UP METHOD
   Future<bool> signUp(String name, String email, String password) async {
     try {
@@ -60,7 +63,7 @@ class UserProvider with ChangeNotifier {
       return false;
     }
   }
-  
+
   // SIGN OUT METHOD
   Future signOut() {
     _auth.signOut();
@@ -68,7 +71,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
     return Future.delayed(Duration.zero);
   }
-  
+
   // ON STATE CHANGED METHOD
   Future<void> _onStateChanged(User user) async {
     if (user == null) {
@@ -76,8 +79,42 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
+      print("CART ITEMS: ${userModel.cart.length}");
+      print("CART ITEMS: ${userModel.cart.length}");
+      print("CART ITEMS: ${userModel.cart.length}");
+      print("CART ITEMS: ${userModel.cart.length}");
+      print("CART ITEMS: ${userModel.cart.length}");
       _status = Status.Authenticated;
     }
+    notifyListeners();
+  }
+
+  Future<bool> addToCart({ProductModel product, String size}) async {
+    try {
+      var uuid = Uuid();
+      String cartItemId = uuid.v4();
+      List<CartItemModel> cart = _userModel.cart;
+
+      Map cartItem = {
+        "id": cartItemId,
+        "name": product.name,
+        "image": product.images,
+        "productId": product.id,
+        "price": product.price,
+        "size": size
+      };
+
+      CartItemModel item = CartItemModel.fromMap(cartItem);
+      _userService.addToCart(userId: _user.uid, cartItemModel: item);
+      return true;
+    } catch (e) {
+      print("unable to add item ${e.toString()}");
+      return false;
+    }
+  }
+
+  Future<void> reloadUserModel() async {
+    _userModel = await _userService.getUserById(user.uid);
     notifyListeners();
   }
 }

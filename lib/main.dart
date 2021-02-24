@@ -1,4 +1,5 @@
 
+import 'package:FashStore/provider/app_provider.dart';
 import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/home_page.dart';
@@ -15,7 +16,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: UserProvider.initialize()),
-        ChangeNotifierProvider.value(value: ProductProvider.initialize())
+        ChangeNotifierProvider.value(value: ProductProvider.initialize()),
+        ChangeNotifierProvider.value(value: AppProvider())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

@@ -1,5 +1,4 @@
 import 'package:FashStore/components/loading.dart';
-import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,5 +1,5 @@
 import 'package:FashStore/components/loading.dart';
-import 'package:FashStore/models/product/product.dart';
+import 'package:FashStore/models/product.dart';
 import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/screens/product_details.dart';
 import 'package:flutter/material.dart';
