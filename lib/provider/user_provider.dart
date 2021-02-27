@@ -2,6 +2,7 @@ import 'package:FashStore/models/cart_item.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/models/user.dart';
 import 'package:FashStore/services/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -93,7 +94,7 @@ class UserProvider with ChangeNotifier {
     try {
       var uuid = Uuid();
       String cartItemId = uuid.v4();
-      List<CartItemModel> cart = _userModel.cart;
+      // List<CartItemModel> cart = _userModel.cart;
 
       Map cartItem = {
         "id": cartItemId,
@@ -111,6 +112,11 @@ class UserProvider with ChangeNotifier {
       print("unable to add item ${e.toString()}");
       return false;
     }
+  }
+
+  Future<void> removeFromCart({CartItemModel cartItemModel}) {
+    _userService.removeFromCart(
+        userId: _user.uid, cartItemModel: cartItemModel);
   }
 
   Future<void> reloadUserModel() async {
@@ -149,7 +155,7 @@ class UserProvider with ChangeNotifier {
 //           .collection("users")
 //           .where("id", isEqualTo: user.uid)
 //            .get();
-//       List<QueryDocumentSnapshot> documents = result.docs;
+//      List<QueryDocumentSnapshot> documents = result.docs;
 
 //       // CHECK IF DOCUMENTS IS EMPTY
 //       if (documents.length == 0) {

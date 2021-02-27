@@ -8,9 +8,11 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       // APPBAR
       appBar: AppBar(
         elevation: 0.1,
@@ -28,7 +30,7 @@ class _CartPageState extends State<CartPage> {
       ),
 
       // BODY
-      body: CartProducts(),
+      body: CartProducts(keys: _key),
 
       // BOTTOM NAVIGATION BAR
       bottomNavigationBar: Container(
