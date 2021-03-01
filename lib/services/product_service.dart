@@ -1,4 +1,4 @@
-import 'package:FashStore/models/product/product.dart';
+import 'package:FashStore/models/product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductService {

@@ -1,9 +1,12 @@
 import 'package:FashStore/components/constants.dart';
+import 'package:FashStore/components/loading.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/provider/app_provider.dart';
 import 'package:FashStore/provider/product_provider.dart';
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:FashStore/models/product/product.dart';
+import 'package:FashStore/models/product.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -17,11 +20,23 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
+  final _key = GlobalKey<ScaffoldState>();
+  String _size = '';
+  @override
+  void initState() {
+    super.initState();
+    _size = widget.product.sizes[0];
+  }
+
   @override
   Widget build(BuildContext context) {
     final ProductProvider provider = Provider.of<ProductProvider>(context);
+    final AppProvider appProvider = Provider.of<AppProvider>(context);
+    final UserProvider userProvider = Provider.of<UserProvider>(context);
     provider.sameProducts(category: widget.product);
+
     return Scaffold(
+      key: _key,
       // APPBAR
       appBar: AppBar(
         elevation: 0.1,
@@ -110,110 +125,24 @@ class _ProductDetailsState extends State<ProductDetails> {
 
           //      =========== FIRST SET OF BUTTONS ===========
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // SIZE BUTTON
-              Expanded(
-                child: MaterialButton(
-                  elevation: 0.4,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("Size"),
-                          content: Text("Choose the size"),
-                          actions: [
-                            MaterialButton(
-                              textColor: Colors.red,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text("close"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  color: Colors.white,
-                  textColor: Colors.grey,
-                  child: Row(
-                    children: [
-                      Expanded(child: Text("Size")),
-                      Expanded(child: Icon(Icons.arrow_drop_down)),
-                    ],
-                  ),
-                ),
-              ),
-
-              // COLOR BUTTON
-              Expanded(
-                child: MaterialButton(
-                  elevation: 0.4,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("Color"),
-                          content: Text("Choose a  color"),
-                          actions: [
-                            MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              textColor: Colors.red,
-                              child: Text("Close"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  color: Colors.white,
-                  textColor: Colors.grey,
-                  child: Row(
-                    children: [
-                      Expanded(child: Text("Color")),
-                      Expanded(child: Icon(Icons.arrow_drop_down)),
-                    ],
-                  ),
-                ),
-              ),
-
-              // QUANTITY BUTTON
-              Expanded(
-                child: MaterialButton(
-                  elevation: 0.4,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("Quantity"),
-                          content: Text("Choose the Quantity"),
-                          actions: [
-                            MaterialButton(
-                              child: Text("Close"),
-                              textColor: Colors.red,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  color: Colors.white,
-                  textColor: Colors.grey,
-                  child: Row(
-                    children: [
-                      Expanded(child: Text("Qty")),
-                      Expanded(child: Icon(Icons.arrow_drop_down)),
-                    ],
-                  ),
-                ),
+              Text("Select size"),
+              DropdownButton<String>(
+                value: _size,
+                //style: TextStyle(fontSize: 15.0),
+                items: widget.product.sizes
+                    .map<DropdownMenuItem<String>>(
+                      (value) =>
+                          DropdownMenuItem(child: Text(value), value: value),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _size = value;
+                  });
+                },
               ),
             ],
           ),
@@ -222,20 +151,33 @@ class _ProductDetailsState extends State<ProductDetails> {
 //        =========== SECOND SET OF BUTTONS ===========
           Row(
             children: [
-              // BUY NOW BUTTON
+              // ADD TO CART NOW BUTTON
               Expanded(
                 child: MaterialButton(
                     elevation: 0.4,
-                    onPressed: () {},
+                    minWidth: MediaQuery.of(context).size.width,
+                    onPressed: () async {
+                      appProvider.changeLoading();
+                      bool success = await userProvider.addToCart(
+                          product: widget.product, size: _size);
+                      if (success) {
+                        _key.currentState.showSnackBar(
+                            SnackBar(content: Text("Added to Cart")));
+                        userProvider.reloadUserModel();
+                        appProvider.changeLoading();
+                        return;
+                      } else {
+                        _key.currentState.showSnackBar(
+                            SnackBar(content: Text("Not added to Cart")));
+                      }
+                      appProvider.changeLoading();
+                      return;
+                    },
                     color: Colors.pink,
                     textColor: Colors.white,
-                    child: Text("Buy now")),
-              ),
-
-              // ADD TO SHOPPING CART BUTTON
-              IconButton(
-                icon: Icon(Icons.add_shopping_cart, color: Colors.red),
-                onPressed: () {},
+                    child: appProvider.isLoading
+                        ? Loading()
+                        : Text("Add to Cart")),
               ),
 
               // LIKE BUTTON

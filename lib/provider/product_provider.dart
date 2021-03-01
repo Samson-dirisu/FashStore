@@ -1,5 +1,6 @@
-import 'package:FashStore/components/services/product_service.dart';
-import 'package:FashStore/models/product/product.dart';
+
+import 'package:FashStore/models/product.dart';
+import 'package:FashStore/services/product_service.dart';
 import 'package:flutter/material.dart';
 
 class ProductProvider with ChangeNotifier {
