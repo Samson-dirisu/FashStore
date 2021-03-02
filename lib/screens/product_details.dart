@@ -72,7 +72,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             color: Colors.black,
             child: GridTile(
               child: Container(
-                color: Colors.white,
+                color:  Colors.white,
                 child: Image.network(widget.product.images[0]),
               ),
 
@@ -261,8 +261,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                 ),
               ),
-
-              //TODO: Remember to create product brand
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(

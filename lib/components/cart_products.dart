@@ -1,35 +1,28 @@
 import 'package:FashStore/components/constants.dart';
+import 'package:FashStore/models/cart_item.dart';
+import 'package:FashStore/provider/app_provider.dart';
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartProducts extends StatefulWidget {
+  final GlobalKey<ScaffoldState> keys;
+
+  const CartProducts({Key key, this.keys}) : super(key: key);
   @override
   _CartProductsState createState() => _CartProductsState();
 }
 
 class _CartProductsState extends State<CartProducts> {
-  var productsOnCart = [
-    
-    {
-      "name": "Red dress",
-      "picture": "images/products/dress1.jpeg",
-      "price": "1800",
-      "size": "M",
-      "color": "Grey",
-      "Quantity": 1,
-    },
-  ];
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return ListView.builder(
-      itemCount: productsOnCart.length,
+      itemCount: userProvider.userModel.cart.length,
       itemBuilder: (context, index) {
         return SingleCartProduct(
-          cartProductColor: productsOnCart[index]['color'],
-          cartProductName: productsOnCart[index]['name'],
-          cartProductPicture: productsOnCart[index]['picture'],
-          cartProductPrice: productsOnCart[index]['price'],
-          cartProductQuantity: productsOnCart[index]['Quantity'],
-          cartProductSize: productsOnCart[index]['size'],
+          keys: widget.keys,
+          index: index,
         );
       },
     );
@@ -37,24 +30,16 @@ class _CartProductsState extends State<CartProducts> {
 }
 
 class SingleCartProduct extends StatelessWidget {
-  final cartProductName;
-  final cartProductPicture;
-  final cartProductPrice;
-  final cartProductSize;
-  final cartProductColor;
-  final cartProductQuantity;
+  final GlobalKey<ScaffoldState> keys;
+  final int index;
 
   // CONSTRUCTOR
-  SingleCartProduct(
-      {this.cartProductColor,
-      this.cartProductName,
-      this.cartProductPicture,
-      this.cartProductPrice,
-      this.cartProductQuantity,
-      this.cartProductSize});
+  SingleCartProduct({this.keys,  this.index});
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final appProvider = Provider.of<AppProvider>(context);
     return Card(
       elevation: 5,
 
@@ -62,23 +47,43 @@ class SingleCartProduct extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.only(left: 0, top: 0),
         // LEADING
-        leading: Image.asset(cartProductPicture, width: 80.0, height: 80),
+        leading: Image.network(userProvider.userModel.cart[index].image[0],
+            width: 80.0, height: 80),
         //TITLE
         title: Text(
-          cartProductName,
+          userProvider.userModel.cart[index].name,
           style: TextStyle(color: headingColor, fontWeight: FontWeight.w500),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          color: Colors.red,
+          onPressed: () async {
+            appProvider.changeLoading();
+            bool success = await userProvider.removeFromCart(
+                cartItem: userProvider.userModel.cart[index]);
+            if (success) {
+              userProvider.reloadUserModel();
+              print("item removed");
+              keys.currentState
+                  .showSnackBar(SnackBar(content: Text("Removed from cart")));
+              appProvider.changeLoading();
+              return;
+            } else {
+              print("item not removed");
+              appProvider.changeLoading();
+            }
+          },
         ),
         // STARTING OF COLUMN
         subtitle: Column(
           children: [
             Row(
               children: [
-
-  //  ====== THIS SECTION IS FOR THE SIZE OF THE PRODUCT =======
+                //  ====== THIS SECTION IS FOR THE SIZE OF THE PRODUCT =======
                 Text("Size:"),
                 SizedBox(width: 10),
                 Text(
-                  cartProductSize,
+                  userProvider.userModel.cart[index].size,
                   style: TextStyle(
                     color: Colors.pinkAccent,
                   ),
@@ -91,7 +96,7 @@ class SingleCartProduct extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: Text(
-                    cartProductColor,
+                    "Grey",
                     style: TextStyle(
                       color: Colors.pinkAccent,
                     ),
@@ -102,11 +107,11 @@ class SingleCartProduct extends StatelessWidget {
             // sizedbox
             SizedBox(height: 15.0),
 
-  //  =======  THIS SECTION IS FOR THE PRODUCT PRICE ======
+            //  =======  THIS SECTION IS FOR THE PRODUCT PRICE ======
             Container(
               alignment: Alignment.topLeft,
               child: Text(
-                "#$cartProductPrice",
+                "#${userProvider.userModel.cart[index].price}",
                 style: TextStyle(
                   fontSize: 16.0,
                   color: Colors.pink,
