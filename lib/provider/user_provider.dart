@@ -1,6 +1,7 @@
 import 'package:FashStore/models/cart_item.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/models/user.dart';
+import 'package:FashStore/services/order_service.dart';
 import 'package:FashStore/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class UserProvider with ChangeNotifier {
   Status _status = Status.Uninitialized;
   UserServices _userService = UserServices();
   UserModel _userModel;
+  OrderService _orderService = OrderService();
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -80,12 +82,8 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
-      print("CART ITEMS: ${userModel.cart.length}");
-      print("CART ITEMS: ${userModel.cart.length}");
-      print("CART ITEMS: ${userModel.cart.length}");
-      print("CART ITEMS: ${userModel.cart.length}");
-      print("CART ITEMS: ${userModel.cart.length}");
       _status = Status.Authenticated;
+ 
     }
     notifyListeners();
   }
@@ -114,9 +112,14 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<void> removeFromCart({CartItemModel cartItemModel}) {
-    _userService.removeFromCart(
-        userId: _user.uid, cartItemModel: cartItemModel);
+  Future<bool> removeFromCart({CartItemModel cartItem}) async {
+    try {
+      _userService.removeFromCart(userId: _user.uid, cartItemModel: cartItem);
+      return true;
+    } catch (e) {
+      print("unable to delete item ${e.toString()}");
+      return false;
+    }
   }
 
   Future<void> reloadUserModel() async {

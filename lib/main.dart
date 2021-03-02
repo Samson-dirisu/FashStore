@@ -1,4 +1,5 @@
 import 'package:FashStore/provider/app_provider.dart';
+import 'package:FashStore/provider/order_provider.dart';
 import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/home_page.dart';
@@ -15,6 +16,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider.value(value: UserProvider.initialize()),
       ChangeNotifierProvider.value(value: ProductProvider.initialize()),
+      ChangeNotifierProvider.value(value: OrderProvider.initialize()),
       ChangeNotifierProvider.value(value: AppProvider())
     ],
     child: MaterialApp(
@@ -42,3 +44,5 @@ class ScreenController extends StatelessWidget {
     }
   }
 }
+
+// start 3.48

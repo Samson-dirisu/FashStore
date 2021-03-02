@@ -1,6 +1,7 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
 import 'package:FashStore/provider/user_provider.dart';
+import 'package:FashStore/screens/order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 
@@ -79,8 +80,8 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text("Samson Dirisu"),
-              accountEmail: Text("Samsonauston@gmail.com"),
+              accountName: Text("${userProvider.userModel.name}"),
+              accountEmail: Text("${userProvider.userModel.email}"),
               currentAccountPicture: GestureDetector(
                 child: CircleAvatar(
                   backgroundColor: Colors.grey,
@@ -119,7 +120,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 leading: Icon(Icons.shopping_basket, color: Colors.red),
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return OrderPage();
+                }));
+              },
             ),
             InkWell(
               child: ListTile(

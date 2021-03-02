@@ -14,22 +14,16 @@ class CartProducts extends StatefulWidget {
 }
 
 class _CartProductsState extends State<CartProducts> {
-  var productsOnCart = [
-    {
-      "name": "Red dress",
-      "picture": "images/products/dress1.jpeg",
-      "price": "1800",
-      "size": "M",
-      "color": "Grey",
-      "Quantity": 1,
-    },
-  ];
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return ListView.builder(
-      itemCount: productsOnCart.length,
+      itemCount: userProvider.userModel.cart.length,
       itemBuilder: (context, index) {
-        return SingleCartProduct(keys: widget.keys, index: index,);
+        return SingleCartProduct(
+          keys: widget.keys,
+          index: index,
+        );
       },
     );
   }
@@ -40,7 +34,7 @@ class SingleCartProduct extends StatelessWidget {
   final int index;
 
   // CONSTRUCTOR
-  SingleCartProduct({this.keys, this.index});
+  SingleCartProduct({this.keys,  this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +47,11 @@ class SingleCartProduct extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.only(left: 0, top: 0),
         // LEADING
-        leading: Image.asset(userProvider.userModel.cart[index].image[0], width: 80.0, height: 80),
+        leading: Image.network(userProvider.userModel.cart[index].image[0],
+            width: 80.0, height: 80),
         //TITLE
-        title: Text(userProvider.userModel.cart[index].name,
+        title: Text(
+          userProvider.userModel.cart[index].name,
           style: TextStyle(color: headingColor, fontWeight: FontWeight.w500),
         ),
         trailing: IconButton(
@@ -64,7 +60,7 @@ class SingleCartProduct extends StatelessWidget {
           onPressed: () async {
             appProvider.changeLoading();
             bool success = await userProvider.removeFromCart(
-                cartItem: userProvider.userModel.cart);
+                cartItem: userProvider.userModel.cart[index]);
             if (success) {
               userProvider.reloadUserModel();
               print("item removed");
@@ -72,6 +68,9 @@ class SingleCartProduct extends StatelessWidget {
                   .showSnackBar(SnackBar(content: Text("Removed from cart")));
               appProvider.changeLoading();
               return;
+            } else {
+              print("item not removed");
+              appProvider.changeLoading();
             }
           },
         ),

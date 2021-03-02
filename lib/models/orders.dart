@@ -1,3 +1,4 @@
+import 'package:FashStore/models/cart_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {

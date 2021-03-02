@@ -4,6 +4,7 @@ enum SearchBy { PRODUCTS, RESTURANTS }
 
 class AppProvider with ChangeNotifier {
   bool isLoading = false;
+  bool showBottomNavBar = true;
   SearchBy search = SearchBy.PRODUCTS;
   String filtered = "Products";
   int totalPrice = 0;
@@ -12,6 +13,7 @@ class AppProvider with ChangeNotifier {
 
   void changeLoading() {
     isLoading = !isLoading;
+    showBottomNavBar = !showBottomNavBar;
     notifyListeners();
   }
 
