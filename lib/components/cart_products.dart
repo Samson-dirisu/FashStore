@@ -1,5 +1,4 @@
 import 'package:FashStore/components/constants.dart';
-import 'package:FashStore/models/cart_item.dart';
 import 'package:FashStore/provider/app_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/material.dart';

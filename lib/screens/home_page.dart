@@ -120,7 +120,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 leading: Icon(Icons.shopping_basket, color: Colors.red),
               ),
-              onTap: () {
+              onTap: () async {
+                await userProvider.getUserOrder();
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return OrderPage();
                 }));

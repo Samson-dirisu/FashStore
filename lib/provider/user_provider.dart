@@ -1,9 +1,9 @@
 import 'package:FashStore/models/cart_item.dart';
+import 'package:FashStore/models/orders.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/models/user.dart';
 import 'package:FashStore/services/order_service.dart';
 import 'package:FashStore/services/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +15,7 @@ class UserProvider with ChangeNotifier {
   FirebaseAuth _auth;
   User _user;
   Status _status = Status.Uninitialized;
+  List<OrderModel> _orders = [];
   UserServices _userService = UserServices();
   UserModel _userModel;
   OrderService _orderService = OrderService();
@@ -26,6 +27,7 @@ class UserProvider with ChangeNotifier {
   Status get status => _status;
   User get user => _user;
   UserModel get userModel => _userModel;
+  List<OrderModel> get orders => _orders;
 
   // SIGN IN METHOD
   Future<bool> signIn(String email, String password) async {
@@ -83,8 +85,12 @@ class UserProvider with ChangeNotifier {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
       _status = Status.Authenticated;
- 
     }
+    notifyListeners();
+  }
+
+  Future<void> getUserOrder() async {
+    _orders = await _orderService.getUserOrders(userId: _user.uid);
     notifyListeners();
   }
 
