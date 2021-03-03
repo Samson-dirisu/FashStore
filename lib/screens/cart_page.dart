@@ -1,15 +1,11 @@
 import 'package:FashStore/components/cart_products.dart';
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/loading.dart';
-import 'package:FashStore/models/cart_item.dart';
-import 'package:FashStore/models/user.dart';
 import 'package:FashStore/provider/app_provider.dart';
 import 'package:FashStore/provider/order_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
-import 'package:FashStore/services/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -18,9 +14,6 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
-  UserModel _userModel;
-  CartItemModel _cartItemModel;
-  OrderService _orderService = OrderService();
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context);
@@ -121,12 +114,21 @@ class _CartPageState extends State<CartPage> {
                   child: MaterialButton(
                     color: Colors.green,
                     textColor: Colors.white,
-                    onPressed: () {
-                      orderProvider.createOrder(
+                    onPressed: () async {
+                      bool successful = await orderProvider.createOrder(
                         userId: userProvider.user.uid,
                         totalPrice: userProvider.userModel.totalCartPrice,
                         cart: userProvider.userModel.cart,
                       );
+                      if (successful) {
+                        _key.currentState.showSnackBar(
+                          SnackBar(content: Text("Your order was successful"))
+                        );
+                      } else {
+                        _key.currentState.showSnackBar(
+                          SnackBar(content: Text("Your order was not successful"))
+                        );
+                      }
                       Navigator.pop(context);
                     },
                     child: Text("Accept"),

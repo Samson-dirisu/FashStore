@@ -1,11 +1,12 @@
-import 'package:FashStore/provider/order_provider.dart';
+
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class OrderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final orderProvider = Provider.of<OrderProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.1,
@@ -13,19 +14,40 @@ class OrderPage extends StatelessWidget {
         backgroundColor: Colors.pink,
       ),
       body: ListView.builder(
-        itemCount: orderProvider.orders.length,
+        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        itemCount: userProvider.orders.length,
         itemBuilder: (context, index) {
-          print("xxxxxxxxxx ${orderProvider.orders.length}");
-          return Card(
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 20.0,
-                  backgroundColor: Colors.red,
-                  backgroundImage: NetworkImage(
-                      "${orderProvider.orders[index].cart[index]["images"][0]}"),
-                )
-              ],
+          return Container(
+            height: 80.0,
+            child: Card(
+              elevation: 5.0,
+              child: ListTile(
+                leading: Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
+                  child: Text(
+                    "#${userProvider.orders[index].total}",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.0),
+                  ),
+                ),
+                title: Padding(
+                  padding: const EdgeInsets.only(bottom: 15.0),
+                  child: Text(
+                    "${userProvider.orders[index].description}",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ),
+                subtitle:
+                    Text("${DateTime.fromMillisecondsSinceEpoch(userProvider.orders[index].creatAt)}"),
+                trailing: Text("${userProvider.orders[index].status}", style: TextStyle(
+                  color: Colors.green
+                ),),
+              ),
             ),
           );
         },

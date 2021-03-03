@@ -16,7 +16,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider.value(value: UserProvider.initialize()),
       ChangeNotifierProvider.value(value: ProductProvider.initialize()),
-      ChangeNotifierProvider.value(value: OrderProvider.initialize()),
+      ChangeNotifierProvider.value(value: OrderProvider()),
       ChangeNotifierProvider.value(value: AppProvider())
     ],
     child: MaterialApp(
