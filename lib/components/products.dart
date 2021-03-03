@@ -1,4 +1,5 @@
 import 'package:FashStore/components/loading.dart';
+import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/screens/product_details.dart';
@@ -45,16 +46,12 @@ class SingleProd extends StatelessWidget {
           child: InkWell(
             // ONTAP FUNCTION
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    // HERE WE ARE PASSING INFO FROM HOMEPAGE TO PRODUCT DETAIL PAGE
-                    return ProductDetails(
+              createPageRoute(
+                destination: ProductDetails(
                       product: product,
-                    );
-                  },
-                ),
+                    ),
+                context: context,
+                offset: Offset(0.0, 1.0),
               );
             },
 

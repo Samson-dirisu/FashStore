@@ -1,4 +1,3 @@
-
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/services/product_service.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ class ProductProvider with ChangeNotifier {
   List<ProductModel> products = [];
   List<ProductModel> productsSearched = [];
   List<ProductModel> similarProducts = [];
+  List<ProductModel> similarCategory = [];
 
   ProductProvider.initialize() {
     loadProducts();
@@ -25,7 +25,17 @@ class ProductProvider with ChangeNotifier {
   }
 
   Future sameProducts({ProductModel category}) async {
-    similarProducts = await _productService.getSimilarProduct(category.category);
+    similarProducts =
+        await _productService.getSimilarProduct(category.category);
     notifyListeners();
   }
+
+  Future sameProductsByText({String category}) async {
+    similarCategory = await _productService.getSimilarProduct(category);
+    notifyListeners();
+  }
+
+  
+
+
 }
