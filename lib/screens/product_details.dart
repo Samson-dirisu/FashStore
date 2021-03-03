@@ -72,7 +72,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             color: Colors.black,
             child: GridTile(
               child: Container(
-                color:  Colors.white,
+                color: Colors.white,
                 child: Image.network(widget.product.images[0]),
               ),
 
@@ -182,8 +182,11 @@ class _ProductDetailsState extends State<ProductDetails> {
 
               // LIKE BUTTON
               IconButton(
-                icon: Icon(Icons.favorite_border, color: Colors.red),
-                onPressed: () {},
+                icon: appProvider.toggleButton ? Icon(Icons.favorite, color: Colors.red)
+                  : Icon(Icons.favorite_border, color: Colors.black),
+                onPressed: () {
+                  appProvider.toggleFavouriteButton();
+                },
               ),
             ],
           ),

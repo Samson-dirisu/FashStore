@@ -1,6 +1,8 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/provider/user_provider.dart';
+import 'package:FashStore/screens/wishList_screen.dart';
 import 'package:FashStore/screens/order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -62,13 +64,10 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) {
-                    return CartPage();
-                  },
-                ),
+             createPageRoute(
+                destination: CartPage(),
+                context: context,
+                offset: Offset(1.0, 0.0),
               );
             },
           ),
@@ -122,9 +121,11 @@ class _HomePageState extends State<HomePage> {
               ),
               onTap: () async {
                 await userProvider.getUserOrder();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return OrderPage();
-                }));
+                createPageRoute(
+                destination: OrderPage(),
+                context: context,
+                offset: Offset(1.0, 0.0),
+              );
               },
             ),
             InkWell(
@@ -136,25 +137,28 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.shopping_cart, color: Colors.red),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return CartPage();
-                    },
-                  ),
-                );
+               createPageRoute(
+                destination: CartPage(),
+                context: context,
+                offset: Offset(1.0, 0.0),
+              );
               },
             ),
             InkWell(
               child: ListTile(
                 title: Text(
-                  "Favourites",
+                  "Wish list",
                   style: TextStyle(color: headingColor),
                 ),
                 leading: Icon(Icons.favorite, color: Colors.red),
               ),
-              onTap: () {},
+              onTap: () {
+                createPageRoute(
+                destination: WishListScreen(),
+                context: context,
+                offset: Offset(1.0, 0.0),
+              );
+              },
             ),
             ListTile(
               title: Text(

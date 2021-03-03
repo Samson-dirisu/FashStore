@@ -5,6 +5,7 @@ enum SearchBy { PRODUCTS, RESTURANTS }
 class AppProvider with ChangeNotifier {
   bool isLoading = false;
   bool showBottomNavBar = true;
+  bool toggleButton = false;
   SearchBy search = SearchBy.PRODUCTS;
   String filtered = "Products";
   int totalPrice = 0;
@@ -19,6 +20,11 @@ class AppProvider with ChangeNotifier {
 
   addPrice({int newPrice}) {
     priceSum += newPrice;
+    notifyListeners();
+  }
+
+  void toggleFavouriteButton() {
+    toggleButton = !toggleButton;
     notifyListeners();
   }
 }

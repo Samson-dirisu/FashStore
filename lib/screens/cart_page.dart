@@ -26,15 +26,7 @@ class _CartPageState extends State<CartPage> {
         elevation: 0.1,
         title: Text("Shopping Cart"),
         backgroundColor: Colors.pink,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.red,
-            ),
-            onPressed: () {},
-          ),
-        ],
+       
       ),
 
       // BODY

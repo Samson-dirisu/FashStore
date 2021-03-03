@@ -1,4 +1,5 @@
 import 'package:FashStore/models/cart_item.dart';
+import 'package:FashStore/models/wish_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
@@ -7,6 +8,7 @@ class UserModel {
   static const EMAIL = 'email';
   static const STRIPE_ID = 'stripeId';
   static const CART = "cart";
+  static const WISH_LIST = "wish list";
 
   String _id;
   String _name;
@@ -20,6 +22,7 @@ class UserModel {
   String get stripeId => _stripeId;
 
   List<CartItemModel> cart;
+  List<WishListModel> wishList;
   int totalCartPrice;
 
   UserModel.fromSnapshot(DocumentSnapshot snapshot) {
