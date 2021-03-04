@@ -2,6 +2,7 @@ import 'package:FashStore/components/loading.dart';
 import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/provider/product_provider.dart';
+import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,56 +42,57 @@ class SingleProd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return Card(
-          elevation: 3,
-          child: InkWell(
-            // ONTAP FUNCTION
-            onTap: () {
-              createPageRoute(
-                destination: ProductDetails(
-                      product: product,
-                    ),
-                context: context,
-                offset: Offset(0.0, 1.0),
-              );
-            },
+      elevation: 3,
+      child: InkWell(
+        onTap: () {
+          userProvider.checkWishList(product);
+          createPageRoute(
+            destination: ProductDetails(
+              product: product,
+            ),
+            context: context,
+            offset: Offset(0.0, 1.0),
+          );
+        },
 
-            // STARTING OF GRIDTILE
-            child: Stack(
-              children: [
-                Positioned.fill(
-            child: Align(alignment: Alignment.center, child: Loading())),
-                GridTile(
-                  footer: Container(
-                    color: Colors.white38,
-                    child: ListTile(
-                      leading: Container(
-                        alignment: Alignment.center,
-                        width: 70.0,
-                        child: Text(
-                          product.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: headingColor,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        product.price.toString(),
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.w800),
+        // STARTING OF GRIDTILE
+        child: Stack(
+          children: [
+            Positioned.fill(
+                child: Align(alignment: Alignment.center, child: Loading())),
+            GridTile(
+              footer: Container(
+                color: Colors.white38,
+                child: ListTile(
+                  leading: Container(
+                    alignment: Alignment.center,
+                    width: 70.0,
+                    child: Text(
+                      product.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: headingColor,
                       ),
                     ),
                   ),
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: product.images[0],
-                    fit: BoxFit.cover,
+                  title: Text(
+                    product.price.toString(),
+                    style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.w800),
                   ),
                 ),
-              ],
+              ),
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: product.images[0],
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
+          ],
+        ),
+      ),
     );
   }
 }

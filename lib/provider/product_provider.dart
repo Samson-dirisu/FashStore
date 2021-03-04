@@ -16,7 +16,7 @@ class ProductProvider with ChangeNotifier {
   loadProducts() async {
     products = await _productService.getProducts();
     notifyListeners();
-  }
+  } 
 
   Future search({String productName}) async {
     productsSearched =

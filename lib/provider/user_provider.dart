@@ -2,6 +2,7 @@ import 'package:FashStore/models/cart_item.dart';
 import 'package:FashStore/models/orders.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/models/user.dart';
+import 'package:FashStore/models/wish_list.dart';
 import 'package:FashStore/services/order_service.dart';
 import 'package:FashStore/services/user.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +17,11 @@ class UserProvider with ChangeNotifier {
   User _user;
   Status _status = Status.Uninitialized;
   List<OrderModel> _orders = [];
+  List<WishListModel> _wishListItems = [];
   UserServices _userService = UserServices();
   UserModel _userModel;
   OrderService _orderService = OrderService();
+  bool val;
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -28,6 +31,7 @@ class UserProvider with ChangeNotifier {
   User get user => _user;
   UserModel get userModel => _userModel;
   List<OrderModel> get orders => _orders;
+  List<WishListModel> get wishListItems => _wishListItems;
 
   // SIGN IN METHOD
   Future<bool> signIn(String email, String password) async {
@@ -56,7 +60,8 @@ class UserProvider with ChangeNotifier {
           "name": name,
           "email": email,
           "uId": value.user.uid,
-          "stripeId": ''
+          "stripeId": '',
+          "wish list": []
         };
         _userService.createUser(values);
       });
@@ -84,6 +89,7 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
+      _wishListItems = await _userService.getWishList(userId: _user.uid);
       _status = Status.Authenticated;
     }
     notifyListeners();
@@ -126,6 +132,60 @@ class UserProvider with ChangeNotifier {
       print("unable to delete item ${e.toString()}");
       return false;
     }
+  }
+
+  Future<bool> addToWishList({ProductModel product, String size}) async {
+    try {
+      var uuid = Uuid();
+      final id = uuid.v4();
+
+      Map item = {
+        "id": id,
+        "images": product.images,
+        "name": product.name,
+        "price": product.price,
+        "size": size,
+        "productId": product.id
+      };
+
+      WishListModel wishListItem = WishListModel.fromMap(item);
+      _userService.addToWishList(userId: _user.uid, wishListItem: wishListItem);
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> removeFromWishList({ProductModel product}) async {
+    try {
+      _userService.removeFromWishList();
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  // Future<void> getWishList(ProductModel productModel) async {
+  //   _wishListItems = await _userService.getWishList(userId: _user.uid);
+  //   notifyListeners();
+  // }
+
+  bool checkWishList(ProductModel product) {
+    if (_wishListItems != null) {
+      for (WishListModel item in _wishListItems) {
+        if (item.productId == product.id) {
+          val = true;
+        } else{
+           val = false;
+        }
+      }
+    } else {
+      val = false;
+    }
+    bool temp = val;
+    return temp;
   }
 
   Future<void> reloadUserModel() async {

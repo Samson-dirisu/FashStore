@@ -131,11 +131,12 @@ class _ProductDetailsState extends State<ProductDetails> {
               Text("Select size"),
               DropdownButton<String>(
                 value: _size,
-                //style: TextStyle(fontSize: 15.0),
                 items: widget.product.sizes
                     .map<DropdownMenuItem<String>>(
-                      (value) =>
-                          DropdownMenuItem(child: Text(value), value: value),
+                      (value) => DropdownMenuItem(
+                        child: Text(value),
+                        value: value,
+                      ),
                     )
                     .toList(),
                 onChanged: (value) {
@@ -182,10 +183,17 @@ class _ProductDetailsState extends State<ProductDetails> {
 
               // LIKE BUTTON
               IconButton(
-                icon: appProvider.toggleButton ? Icon(Icons.favorite, color: Colors.red)
-                  : Icon(Icons.favorite_border, color: Colors.black),
+                icon:  userProvider.checkWishList(widget.product)
+                    ? Icon(Icons.favorite, color: Colors.red)
+                    :Icon(Icons.favorite_border, color: Colors.black),
                 onPressed: () {
-                  appProvider.toggleFavouriteButton();
+                  if (userProvider.wishListItems.contains(widget.product.id)) {
+                    userProvider.removeFromWishList(product: widget.product);
+                    userProvider.reloadUserModel();
+                  } else {
+                    userProvider.addToWishList(product: widget.product);
+                    userProvider.reloadUserModel();
+                  }
                 },
               ),
             ],
