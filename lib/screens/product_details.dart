@@ -185,7 +185,7 @@ class _ProductDetailsState extends State<ProductDetails> {
               IconButton(
                 icon:  userProvider.checkWishList(widget.product)
                     ? Icon(Icons.favorite, color: Colors.red)
-                    :Icon(Icons.favorite_border, color: Colors.black),
+                    : Icon(Icons.favorite_border, color: Colors.black),
                 onPressed: () {
                   if (userProvider.wishListItems.contains(widget.product.id)) {
                     userProvider.removeFromWishList(product: widget.product);
