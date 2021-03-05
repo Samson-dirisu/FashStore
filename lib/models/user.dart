@@ -60,7 +60,7 @@ class UserModel {
   }
   
 
-  // method to get total price
+  // method to get total price---
   int getTotalPrice({List cart}) {
     if (cart == null) {
       return 0;

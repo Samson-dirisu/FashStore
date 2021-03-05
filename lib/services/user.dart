@@ -71,6 +71,7 @@ class UserServices {
       for (Map snap in snapshot.get('wish list')) {
         item.add(WishListModel.fromMap(snap));
         print("xxxxxxxxxxxxxxxxxxxxxxxxxx ${item.length}");
+        print("${item[0].name}");
       }
       return item;
     });

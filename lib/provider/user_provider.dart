@@ -21,7 +21,6 @@ class UserProvider with ChangeNotifier {
   UserServices _userService = UserServices();
   UserModel _userModel;
   OrderService _orderService = OrderService();
-  bool val;
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -61,7 +60,7 @@ class UserProvider with ChangeNotifier {
           "email": email,
           "uId": value.user.uid,
           "stripeId": '',
-          "wish list": []
+          "wish list": [{"productId" : 0000000000000000}]
         };
         _userService.createUser(values);
       });
@@ -112,7 +111,8 @@ class UserProvider with ChangeNotifier {
         "image": product.images,
         "productId": product.id,
         "price": product.price,
-        "size": size
+        "size": size,
+        "wish list" : []
       };
 
       CartItemModel item = CartItemModel.fromMap(cartItem);
@@ -172,20 +172,14 @@ class UserProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  bool checkWishList(ProductModel product) {
-    if (_wishListItems != null) {
-      for (WishListModel item in _wishListItems) {
-        if (item.productId == product.id) {
-          val = true;
-        } else{
-           val = false;
-        }
+   checkWishList(ProductModel product) {
+    for (int i = 0; i < _wishListItems.length; i++) {
+      if (_wishListItems[i].id == product.id) {
+        return true;
+      } else {
+        return false;
       }
-    } else {
-      val = false;
-    }
-    bool temp = val;
-    return temp;
+    } 
   }
 
   Future<void> reloadUserModel() async {
@@ -271,5 +265,7 @@ class UserProvider with ChangeNotifier {
 //       );
 //     } else {
 //       Fluttertoast.showToast(msg: "Login failed");
+//     }
+//   }
 //     }
 //   }

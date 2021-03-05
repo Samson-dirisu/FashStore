@@ -48,6 +48,7 @@ class SingleProd extends StatelessWidget {
       child: InkWell(
         onTap: () {
           userProvider.checkWishList(product);
+          print("xxxxxxxxxxxxxxxx ${userProvider.wishListItems.length}");
           createPageRoute(
             destination: ProductDetails(
               product: product,
