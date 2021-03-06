@@ -21,6 +21,7 @@ class UserProvider with ChangeNotifier {
   UserServices _userService = UserServices();
   UserModel _userModel;
   OrderService _orderService = OrderService();
+  bool toggleButton = false;
 
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
@@ -60,7 +61,6 @@ class UserProvider with ChangeNotifier {
           "email": email,
           "uId": value.user.uid,
           "stripeId": '',
-          "wish list": [{"productId" : 0000000000000000}]
         };
         _userService.createUser(values);
       });
@@ -88,17 +88,18 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
-      _wishListItems = await _userService.getWishList(userId: _user.uid);
       _status = Status.Authenticated;
     }
     notifyListeners();
   }
 
+  // function responsible for getting user data from firestore
   Future<void> getUserOrder() async {
     _orders = await _orderService.getUserOrders(userId: _user.uid);
     notifyListeners();
   }
 
+  // provider function responsible for adding product to cart list
   Future<bool> addToCart({ProductModel product, String size}) async {
     try {
       var uuid = Uuid();
@@ -112,7 +113,7 @@ class UserProvider with ChangeNotifier {
         "productId": product.id,
         "price": product.price,
         "size": size,
-        "wish list" : []
+        "wish list": []
       };
 
       CartItemModel item = CartItemModel.fromMap(cartItem);
@@ -124,6 +125,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // provider function responsible for removing product from cart list
   Future<bool> removeFromCart({CartItemModel cartItem}) async {
     try {
       _userService.removeFromCart(userId: _user.uid, cartItemModel: cartItem);
@@ -134,13 +136,10 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // provider function responsible for adding product to wish list
   Future<bool> addToWishList({ProductModel product, String size}) async {
     try {
-      var uuid = Uuid();
-      final id = uuid.v4();
-
       Map item = {
-        "id": id,
         "images": product.images,
         "name": product.name,
         "price": product.price,
@@ -157,9 +156,18 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> removeFromWishList({ProductModel product}) async {
+  // provider function for removing product from wish list
+  Future<bool> removeFromWishList({ProductModel product, String size}) async {
     try {
-      _userService.removeFromWishList();
+      Map item = {
+        "images": product.images,
+        "name": product.name,
+        "price": product.price,
+        "size": size,
+        "productId": product.id
+      };
+      WishListModel wishItem = WishListModel.fromMap(item);
+      _userService.removeFromWishList(userId: user.uid, wishListItem: wishItem);
       return true;
     } catch (e) {
       print(e.toString());
@@ -167,19 +175,20 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  // Future<void> getWishList(ProductModel productModel) async {
-  //   _wishListItems = await _userService.getWishList(userId: _user.uid);
-  //   notifyListeners();
-  // }
+  // provider function responsible for getting wish list items from firebase
+  Future<void> getWishList(ProductModel productModel) async {
+    _wishListItems = await _userService.getWishList(userId: _user.uid);
+    notifyListeners();
+  }
 
-   checkWishList(ProductModel product) {
-    for (int i = 0; i < _wishListItems.length; i++) {
-      if (_wishListItems[i].id == product.id) {
-        return true;
-      } else {
-        return false;
-      }
-    } 
+  checkWishList(ProductModel product) async {
+    if (await _userService.checkWishList(userId: _user.uid, product: product)) {
+      toggleButton = true;
+      notifyListeners();
+    } else {
+      toggleButton = false;
+      notifyListeners();
+    }
   }
 
   Future<void> reloadUserModel() async {

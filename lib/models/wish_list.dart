@@ -1,5 +1,4 @@
 class WishListModel {
-  static const ID = "id";
   static const IMAGE = "images";
   static const NAME = "name";
   static const PRODUCT_ID = "productId";
@@ -7,7 +6,6 @@ class WishListModel {
   static const SIZE = "size";
   
   // private variables
-  String _id;
   List _images;
   String _name;
   String _productId;
@@ -15,7 +13,6 @@ class WishListModel {
   String _size;
   
   // getters
-  String get id => _id;
   List get images => _images;
   String get name => _name;
   String get productId => _productId;
@@ -24,8 +21,7 @@ class WishListModel {
   
   // named constructor for converting an object of type Map
   // to dart object
-  WishListModel.fromMap(Map map) {
-    _id = map[ID];
+  WishListModel.fromMap(Map map) {    
     _images = map[IMAGE];
     _name = map[NAME];
     _productId = map[PRODUCT_ID];
@@ -35,7 +31,6 @@ class WishListModel {
   
   // method responsible for converting dart object to an object of type map
   Map toMap() => {
-        ID: _id,
         IMAGE: _images,
         NAME: _name,
         PRODUCT_ID: _productId,
