@@ -70,10 +70,21 @@ class UserServices {
       List<WishListModel> item = [];
       for (Map snap in snapshot.get('wish list')) {
         item.add(WishListModel.fromMap(snap));
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxx ${item.length}");
-        print("${item[0].name}");
       }
       return item;
     });
+  }
+
+  Future<bool> checkWishList({String userId, ProductModel product}) async {
+    var item =
+        _firestore.collection(collection).doc(userId).get().then((value) {
+      for (int i = 0; i < value.get('wish list').length; i++) {
+        if (value[i].get('wish list')['productId'] == product.id) {
+          return true;
+        } else
+          return false;
+      }
+    });
+    return item;
   }
 }

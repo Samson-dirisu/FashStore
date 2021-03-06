@@ -47,8 +47,11 @@ class SingleProd extends StatelessWidget {
       elevation: 3,
       child: InkWell(
         onTap: () {
+          userProvider.getWishList(product);
           userProvider.checkWishList(product);
-          print("xxxxxxxxxxxxxxxx ${userProvider.wishListItems.length}");
+          userProvider.checkWishList(product);
+          
+          print(userProvider.toggleButton);
           createPageRoute(
             destination: ProductDetails(
               product: product,
