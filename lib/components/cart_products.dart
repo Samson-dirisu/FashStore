@@ -62,13 +62,12 @@ class SingleCartProduct extends StatelessWidget {
                 cartItem: userProvider.userModel.cart[index]);
             if (success) {
               userProvider.reloadUserModel();
-              print("item removed");
+             
               keys.currentState
                   .showSnackBar(SnackBar(content: Text("Removed from cart")));
               appProvider.changeLoading();
               return;
             } else {
-              print("item not removed");
               appProvider.changeLoading();
             }
           },

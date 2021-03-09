@@ -2,7 +2,6 @@ import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
 import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/provider/user_provider.dart';
-import 'package:FashStore/screens/wishList_screen.dart';
 import 'package:FashStore/screens/order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -97,17 +96,7 @@ class _HomePageState extends State<HomePage> {
                   "Home Page",
                   style: TextStyle(color: headingColor),
                 ),
-                leading: Icon(Icons.home, color: Colors.red),
-              ),
-              onTap: () {},
-            ),
-            InkWell(
-              child: ListTile(
-                title: Text(
-                  "My Account",
-                  style: TextStyle(color: headingColor),
-                ),
-                leading: Icon(Icons.person, color: Colors.red),
+                leading: Icon(Icons.home, color: Colors.pink),
               ),
               onTap: () {},
             ),
@@ -117,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                   "My Orders",
                   style: TextStyle(color: headingColor),
                 ),
-                leading: Icon(Icons.shopping_basket, color: Colors.red),
+                leading: Icon(Icons.shopping_basket, color: Colors.pink),
               ),
               onTap: () async {
                 await userProvider.getUserOrder();
@@ -134,27 +123,11 @@ class _HomePageState extends State<HomePage> {
                   "Shopping cart",
                   style: TextStyle(color: headingColor),
                 ),
-                leading: Icon(Icons.shopping_cart, color: Colors.red),
+                leading: Icon(Icons.shopping_cart, color: Colors.pink),
               ),
               onTap: () {
                createPageRoute(
                 destination: CartPage(),
-                context: context,
-                offset: Offset(1.0, 0.0),
-              );
-              },
-            ),
-            InkWell(
-              child: ListTile(
-                title: Text(
-                  "Wish list",
-                  style: TextStyle(color: headingColor),
-                ),
-                leading: Icon(Icons.favorite, color: Colors.red),
-              ),
-              onTap: () {
-                createPageRoute(
-                destination: WishListScreen(),
                 context: context,
                 offset: Offset(1.0, 0.0),
               );
@@ -165,34 +138,12 @@ class _HomePageState extends State<HomePage> {
                 "Log out",
                 style: TextStyle(color: headingColor),
               ),
-              leading: Icon(Icons.backspace_sharp, color: Colors.red),
+              leading: Icon(Icons.backspace_sharp, color: Colors.pink),
               onTap: () {
                 userProvider.signOut();
               },
             ),
 
-            Divider(),
-
-            InkWell(
-              child: ListTile(
-                title: Text(
-                  "Settings",
-                  style: TextStyle(color: headingColor),
-                ),
-                leading: Icon(Icons.settings),
-              ),
-              onTap: () {},
-            ),
-            InkWell(
-              child: ListTile(
-                title: Text(
-                  "About",
-                  style: TextStyle(color: headingColor),
-                ),
-                leading: Icon(Icons.help),
-              ),
-              onTap: () {},
-            ),
           ],
         ),
       ),

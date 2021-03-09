@@ -43,7 +43,6 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
-      print(e.toString());
       return false;
     }
   }
@@ -68,7 +67,6 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
-      print(e.toString());
       return false;
     }
   }
@@ -81,13 +79,14 @@ class UserProvider with ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
-  // ON STATE CHANGED METHOD
+  // function responsible for checking for auth changes.
   Future<void> _onStateChanged(User user) async {
     if (user == null) {
       _status = Status.Unauthenticated;
     } else {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
+      _wishListItems = await _userService.getWishList(userId: _user.uid);
       _status = Status.Authenticated;
     }
     notifyListeners();
@@ -120,7 +119,6 @@ class UserProvider with ChangeNotifier {
       _userService.addToCart(userId: _user.uid, cartItemModel: item);
       return true;
     } catch (e) {
-      print("unable to add item ${e.toString()}");
       return false;
     }
   }
@@ -131,9 +129,12 @@ class UserProvider with ChangeNotifier {
       _userService.removeFromCart(userId: _user.uid, cartItemModel: cartItem);
       return true;
     } catch (e) {
-      print("unable to delete item ${e.toString()}");
       return false;
     }
+  }
+
+  void clearCart() {
+    _userService.clearCart(userId: _user.uid);
   }
 
   // provider function responsible for adding product to wish list
@@ -151,7 +152,6 @@ class UserProvider with ChangeNotifier {
       _userService.addToWishList(userId: _user.uid, wishListItem: wishListItem);
       return true;
     } catch (e) {
-      print(e.toString());
       return false;
     }
   }
@@ -170,27 +170,35 @@ class UserProvider with ChangeNotifier {
       _userService.removeFromWishList(userId: user.uid, wishListItem: wishItem);
       return true;
     } catch (e) {
-      print(e.toString());
       return false;
     }
   }
 
   // provider function responsible for getting wish list items from firebase
-  Future<void> getWishList(ProductModel productModel) async {
+  Future<void> getWishList() async {
     _wishListItems = await _userService.getWishList(userId: _user.uid);
     notifyListeners();
   }
 
-  checkWishList(ProductModel product) async {
-    if (await _userService.checkWishList(userId: _user.uid, product: product)) {
-      toggleButton = true;
-      notifyListeners();
-    } else {
+  void checkWishList(ProductModel product) {
+    //getWishList();
+    if (_wishListItems == null) {
       toggleButton = false;
       notifyListeners();
+    } else {
+      for (WishListModel item in _wishListItems) {
+        if (item.productId == product.id) {
+          toggleButton = true;
+          notifyListeners();
+        } else {
+          toggleButton = false;
+          notifyListeners();
+        }
+      }
     }
   }
 
+  // function responsible for reloading the user model with latest data
   Future<void> reloadUserModel() async {
     _userModel = await _userService.getUserById(user.uid);
     notifyListeners();

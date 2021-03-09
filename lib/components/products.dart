@@ -1,4 +1,5 @@
 import 'package:FashStore/components/loading.dart';
+import 'package:FashStore/components/tag.dart';
 import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/models/product.dart';
 import 'package:FashStore/provider/product_provider.dart';
@@ -42,20 +43,14 @@ class SingleProd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
+    final provider = Provider.of<ProductProvider>(context);
     return Card(
       elevation: 3,
       child: InkWell(
         onTap: () {
-          userProvider.getWishList(product);
-          userProvider.checkWishList(product);
-          userProvider.checkWishList(product);
-          
-          print(userProvider.toggleButton);
+          provider.sameProductsByText(category: product.category);
           createPageRoute(
-            destination: ProductDetails(
-              product: product,
-            ),
+            destination: ProductDetails(product: product),
             context: context,
             offset: Offset(0.0, 1.0),
           );
@@ -68,24 +63,13 @@ class SingleProd extends StatelessWidget {
                 child: Align(alignment: Alignment.center, child: Loading())),
             GridTile(
               footer: Container(
-                color: Colors.white38,
-                child: ListTile(
-                  leading: Container(
-                    alignment: Alignment.center,
-                    width: 70.0,
-                    child: Text(
-                      product.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: headingColor,
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    product.price.toString(),
-                    style: TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.w800),
-                  ),
+                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Tag(text: product.name),
+                    Tag(text: "\$${product.price}", textColor: Colors.green),
+                  ],
                 ),
               ),
               child: FadeInImage.memoryNetwork(

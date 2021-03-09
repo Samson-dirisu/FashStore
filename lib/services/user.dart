@@ -50,6 +50,12 @@ class UserServices {
     });
   }
 
+  void clearCart({String userId}) {
+    _firestore.collection(collection).doc(userId).get().then((value) {
+      return value.data().clear();
+    });
+  }
+
   // function responsible for adding product to wish list
   void addToWishList({String userId, WishListModel wishListItem}) {
     _firestore.collection(collection).doc(userId).update({
@@ -68,8 +74,12 @@ class UserServices {
   Future<List<WishListModel>> getWishList({String userId}) async {
     return _firestore.collection(collection).doc(userId).get().then((snapshot) {
       List<WishListModel> item = [];
-      for (Map snap in snapshot.get('wish list')) {
-        item.add(WishListModel.fromMap(snap));
+      if (snapshot.get('wish list') == null) {
+        item.add(WishListModel.fromMap({}));
+      } else {
+        for (Map snap in snapshot.get('wish list')) {
+          item.add(WishListModel.fromMap(snap));
+        }
       }
       return item;
     });

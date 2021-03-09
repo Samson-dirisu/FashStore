@@ -1,6 +1,7 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/loading.dart';
 import 'package:FashStore/components/products.dart';
+import 'package:FashStore/components/tag.dart';
 import 'package:FashStore/models/user.dart';
 import 'package:FashStore/models/wish_list.dart';
 import 'package:FashStore/provider/app_provider.dart';
@@ -35,17 +36,28 @@ class _ProductDetailsState extends State<ProductDetails> {
     final ProductProvider provider = Provider.of<ProductProvider>(context);
     final AppProvider appProvider = Provider.of<AppProvider>(context);
     final UserProvider userProvider = Provider.of<UserProvider>(context);
-    final toggleButton =
-        context.select((UserProvider provider) => provider.toggleButton);
+    // final toggleButton =
+    //     context.select((UserProvider provider) => provider.toggleButton);
     //final toggleButton = Provider.of<UserProvider>(context);
-    provider.sameProducts(category: widget.product);
+
+    //provider.sameProducts(category: widget.product);
+    provider.sameProductsByText(category: widget.product.category);
+
+    // button() {
+    //   if (userProvider.wishListItems != null) {
+    //     if (userProvider.wishListItems.contains(widget.product.id)) {
+    //       return true;
+    //     } else return
+    //       false;
+    //   } else
+    //     return false;
+    // }
 
     return Scaffold(
         key: _key,
         // APPBAR
         appBar: AppBar(
           elevation: 0.1,
-          centerTitle: true,
           title: InkWell(
             child: Text("FashStore"),
             onTap: () {
@@ -55,17 +67,6 @@ class _ProductDetailsState extends State<ProductDetails> {
             },
           ),
           backgroundColor: Colors.pink,
-
-          // APPBAR BUTTONS
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              onPressed: () {},
-            ),
-          ],
         ),
 
         // BODY
@@ -83,44 +84,14 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                 //FOOTER
                 footer: Container(
-                  color: Colors.white38,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.only(left: 0),
-                    leading: Container(
-                      width: 100.0,
-                      alignment: Alignment.center,
-                      child: Text(
-                        widget.product.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.0,
-                          color: headingColor,
-                        ),
-                      ),
-                    ),
-                    title: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "0900",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            "#${widget.product.price}",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Tag(text: widget.product.name),
+                      Tag(
+                          text: "\$${widget.product.price}",
+                          textColor: Colors.green)
+                    ],
                   ),
                 ),
               ),
@@ -186,31 +157,28 @@ class _ProductDetailsState extends State<ProductDetails> {
                           : Text("Add to Cart")),
                 ),
 
-                //LIKE BUTTON
-                IconButton(
-                  icon: toggleButton
-                      ? Icon(Icons.favorite, color: Colors.pink)
-                      : Icon(Icons.favorite_border, color: Colors.black),
-                  onPressed: () {
-                    print(toggleButton);
-                    for (WishListModel item
-                        in userProvider.userModel.wishList) {
-                      if (item.productId == widget.product.id) {
-                        userProvider.removeFromWishList(
-                            product: widget.product, size: _size);
-                        userProvider.reloadUserModel();
-                        userProvider.checkWishList(widget.product);
-                        break;
-                      } else {
-                        userProvider.addToWishList(
-                            product: widget.product, size: _size);
-
-                        userProvider.reloadUserModel();
-                        userProvider.checkWishList(widget.product);
-                      }
-                    }
-                  },
-                ),
+                // //LIKE BUTTON
+                // IconButton(
+                //   icon: button()
+                //       ? Icon(Icons.favorite, color: Colors.pink)
+                //       : Icon(Icons.favorite_border, color: Colors.black),
+                //   onPressed: () {
+                //     for (WishListModel item in userProvider.wishListItems) {
+                //       if (item.productId == widget.product.id) {
+                //         userProvider.removeFromWishList(
+                //             product: widget.product, size: _size);
+                //         userProvider.getWishList();
+                //         userProvider.checkWishList(widget.product);
+                //         break;
+                //       } else {
+                //         userProvider.addToWishList(
+                //             product: widget.product, size: _size);
+                //         userProvider.getWishList();
+                //         userProvider.checkWishList(widget.product);
+                //       }
+                //     }
+                //   },
+                // ),
               ],
             ),
 
@@ -333,7 +301,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             Container(
               height: 360.0,
               child: SimilarProducts(
-                products: provider.similarProducts,
+                products: provider.similarCategory,
               ),
             ),
           ],
@@ -352,6 +320,7 @@ class SimilarProducts extends StatefulWidget {
 class _SimilarProductsState extends State<SimilarProducts> {
   @override
   Widget build(BuildContext context) {
+    print(widget.products.length);
     return GridView.builder(
       padding: EdgeInsets.only(bottom: 15.0),
       itemCount: widget.products.length,

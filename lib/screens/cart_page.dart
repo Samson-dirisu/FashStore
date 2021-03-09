@@ -26,7 +26,6 @@ class _CartPageState extends State<CartPage> {
         elevation: 0.1,
         title: Text("Shopping Cart"),
         backgroundColor: Colors.pink,
-       
       ),
 
       // BODY
@@ -113,14 +112,14 @@ class _CartPageState extends State<CartPage> {
                         cart: userProvider.userModel.cart,
                       );
                       if (successful) {
-                        _key.currentState.showSnackBar(
-                          SnackBar(content: Text("Your order was successful"))
-                        );
+                        _key.currentState.showSnackBar(SnackBar(
+                            content: Text("Your order was successful")));
                       } else {
-                        _key.currentState.showSnackBar(
-                          SnackBar(content: Text("Your order was not successful"))
-                        );
+                        _key.currentState.showSnackBar(SnackBar(
+                            content: Text("Your order was not successful")));
                       }
+                      //todo: add a clear cart function here
+
                       Navigator.pop(context);
                     },
                     child: Text("Accept"),
