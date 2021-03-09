@@ -20,7 +20,6 @@ class OrderProvider with ChangeNotifier {
           cart: cart);
       return true;
     } catch (e) {
-      print("The error is $e");
       return false;
     }
   }
