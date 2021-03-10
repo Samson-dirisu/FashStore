@@ -51,8 +51,8 @@ class UserServices {
   }
 
   void clearCart({String userId}) {
-    _firestore.collection(collection).doc(userId).get().then((value) {
-      return value.data().clear();
+    _firestore.collection(collection).doc(userId).update({
+      'cart' : FieldValue.delete()
     });
   }
 

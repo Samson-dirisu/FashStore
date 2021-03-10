@@ -25,7 +25,7 @@ class OrderPage extends StatelessWidget {
                 leading: Padding(
                   padding: const EdgeInsets.only(top: 0.0),
                   child: Text(
-                    "#${userProvider.orders[index].total}",
+                    "\$${userProvider.orders[index].total}",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

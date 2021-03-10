@@ -13,7 +13,7 @@ class ProductService {
         }
         return products;
       });
-  
+
   // search function
   Future<List<ProductModel>> searchProducts({String productName}) {
     // code to convert the first character to uppercase
@@ -28,22 +28,23 @@ class ProductService {
           List<ProductModel> products = [];
           for (DocumentSnapshot result in snapshot.docs) {
             products.add(ProductModel.fromSnapshot(result));
+            print("xxxxx ${products.length}");
           }
           return products;
         });
   }
 
   Future<List<ProductModel>> getSimilarProduct(String category) {
-   return _firestore
-      .collection(collection)
-      .where("category", isEqualTo: category)
-      .get()
-      .then((snapshot) {
-        List<ProductModel> products = [];
-        for (DocumentSnapshot item in snapshot.docs) {
-          products.add(ProductModel.fromSnapshot(item));
-        }
-        return products;
-      });
+    return _firestore
+        .collection(collection)
+        .where("category", isEqualTo: category)
+        .get()
+        .then((snapshot) {
+      List<ProductModel> products = [];
+      for (DocumentSnapshot item in snapshot.docs) {
+        products.add(ProductModel.fromSnapshot(item));
+      }
+      return products;
+    });
   }
 }
