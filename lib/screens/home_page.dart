@@ -1,8 +1,10 @@
 import 'package:FashStore/components/constants.dart';
 import 'package:FashStore/components/products.dart';
 import 'package:FashStore/helper/navigator.dart';
+import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
 import 'package:FashStore/screens/order_page.dart';
+import 'package:FashStore/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 
@@ -18,9 +20,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool showField = false;
+  var _key = GlobalKey<ScaffoldState>();
+  String value = '';
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
 
     Widget imageCarousel = Container(
       height: 200,
@@ -44,31 +50,71 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
+      key: _key,
       // APPBAR
       appBar: AppBar(
         elevation: 0.1,
-        title: Text("FashStore"),
+        title:
+            Visibility(visible: showField == false, child: Text("FashStore")),
         backgroundColor: Colors.pink,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.white,
+          showField
+              ? Container(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 7.0, right: 8.0),
+                    child: TextFormField(
+                      cursorColor: Colors.white,
+                      autofocus: true,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        disabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        suffixIcon: Icon(Icons.search, color: Colors.white),
+                      ),
+                      onFieldSubmitted: (value) {
+                        setState(() {
+                          showField = !showField;
+                          value = value;
+                        });
+                        productProvider.search(productName: value);
+                         createPageRoute(
+                  destination: SearchScreen(),
+                  context: context,
+                  offset: Offset(1.0, 0.0),
+                );
+                      },
+                    ),
+                  ),
+                )
+              : IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      showField = !showField;
+                    });
+                  },
+                ),
+          Visibility(
+            visible: showField == false,
+            child: IconButton(
+              icon: Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                createPageRoute(
+                  destination: CartPage(),
+                  context: context,
+                  offset: Offset(1.0, 0.0),
+                );
+              },
             ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Colors.white,
-            ),
-            onPressed: () {
-             createPageRoute(
-                destination: CartPage(),
-                context: context,
-                offset: Offset(1.0, 0.0),
-              );
-            },
           ),
         ],
       ),
@@ -111,10 +157,10 @@ class _HomePageState extends State<HomePage> {
               onTap: () async {
                 await userProvider.getUserOrder();
                 createPageRoute(
-                destination: OrderPage(),
-                context: context,
-                offset: Offset(1.0, 0.0),
-              );
+                  destination: OrderPage(),
+                  context: context,
+                  offset: Offset(1.0, 0.0),
+                );
               },
             ),
             InkWell(
@@ -126,11 +172,11 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.shopping_cart, color: Colors.pink),
               ),
               onTap: () {
-               createPageRoute(
-                destination: CartPage(),
-                context: context,
-                offset: Offset(1.0, 0.0),
-              );
+                createPageRoute(
+                  destination: CartPage(),
+                  context: context,
+                  offset: Offset(1.0, 0.0),
+                );
               },
             ),
             ListTile(
@@ -143,7 +189,6 @@ class _HomePageState extends State<HomePage> {
                 userProvider.signOut();
               },
             ),
-
           ],
         ),
       ),

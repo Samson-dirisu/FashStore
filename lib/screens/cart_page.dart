@@ -29,7 +29,9 @@ class _CartPageState extends State<CartPage> {
       ),
 
       // BODY
-      body: appProvider.isLoading ? Loading() : CartProducts(keys: _key),
+      body: userProvider.userModel.cart.isEmpty 
+        ? Center(child: Text("Your cart is empty"))
+        : CartProducts(keys: _key),
 
       // BOTTOM NAVIGATION BAR
       bottomNavigationBar: Visibility(
@@ -118,7 +120,8 @@ class _CartPageState extends State<CartPage> {
                         _key.currentState.showSnackBar(SnackBar(
                             content: Text("Your order was not successful")));
                       }
-                      //todo: add a clear cart function here
+                      userProvider.clearCart();
+                      userProvider.reloadUserModel();
 
                       Navigator.pop(context);
                     },
