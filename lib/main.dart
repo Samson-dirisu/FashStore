@@ -2,6 +2,7 @@ import 'package:FashStore/provider/app_provider.dart';
 import 'package:FashStore/provider/order_provider.dart';
 import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
+import 'package:FashStore/screens/RegisterScreen.dart';
 import 'package:FashStore/screens/home_page.dart';
 import 'package:FashStore/screens/login.dart';
 import 'package:FashStore/screens/splash.dart';
@@ -31,16 +32,17 @@ class ScreenController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
-    switch (user.status) {
-      case Status.Uninitialized:
-        return Splash();
-      case Status.Unauthenticated:
-      case Status.Authenticating:
-        return Login();
-      case Status.Authenticated:
-        return HomePage();
-      default:
-        return Login();
+      switch (user.status) {
+        case Status.Uninitialized:
+          return Splash();
+        case Status.Unauthenticated:
+        case Status.Authenticating:
+          return Login();
+        case Status.Authenticated:
+          return HomePage();
+        default:
+          return Login();
+      
     }
   }
 }
