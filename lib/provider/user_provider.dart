@@ -1,3 +1,4 @@
+import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/models/cart_item.dart';
 import 'package:FashStore/models/orders.dart';
 import 'package:FashStore/models/product.dart';
@@ -5,15 +6,20 @@ import 'package:FashStore/models/user.dart';
 import 'package:FashStore/models/wish_list.dart';
 import 'package:FashStore/services/order_service.dart';
 import 'package:FashStore/services/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
 class UserProvider with ChangeNotifier {
   FirebaseAuth _auth;
+  GoogleSignIn googleSignIn = GoogleSignIn();
   User _user;
   Status _status = Status.Uninitialized;
   List<OrderModel> _orders = [];
@@ -23,10 +29,12 @@ class UserProvider with ChangeNotifier {
   OrderService _orderService = OrderService();
   bool toggleButton = false;
 
+  // named constructor
   UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen(_onStateChanged);
   }
 
+  // getters
   Status get status => _status;
   User get user => _user;
   UserModel get userModel => _userModel;
@@ -38,7 +46,14 @@ class UserProvider with ChangeNotifier {
     try {
       _status = Status.Authenticating;
       notifyListeners();
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        _userModel = await _userService.getUserById(value.user.uid);
+        _status = Status.Authenticated;
+        notifyListeners();
+      });
+
       return true;
     } catch (e) {
       _status = Status.Unauthenticated;
@@ -52,9 +67,11 @@ class UserProvider with ChangeNotifier {
     try {
       _status = Status.Authenticating;
       notifyListeners();
+
+      // create user with email and password
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) {
+          .then((value) async {
         Map<String, dynamic> values = {
           "name": name,
           "email": email,
@@ -62,6 +79,9 @@ class UserProvider with ChangeNotifier {
           "stripeId": '',
         };
         _userService.createUser(values);
+        _userModel = await _userService.getUserById(value.user.uid);
+        _status = Status.Authenticated;
+        notifyListeners();
       });
       return true;
     } catch (e) {
@@ -79,17 +99,80 @@ class UserProvider with ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
+  // function responsible for google sign in and sign up
+  Future<bool> googleSignUp() async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      GoogleSignInAccount googleUser = await googleSignIn.signIn();
+      GoogleSignInAuthentication authentication =
+          await googleUser.authentication;
+      AuthCredential authCredential = GoogleAuthProvider.credential(
+          idToken: authentication.idToken,
+          accessToken: authentication.accessToken);
+      UserCredential userCredential =
+          await _auth.signInWithCredential(authCredential);
+      User user = userCredential.user;
+
+      // check if authcredential has value
+      if (authCredential != null) {
+        final QuerySnapshot result = await FirebaseFirestore.instance
+            .collection('users')
+            .where("uId", isEqualTo: user.uid)
+            .get();
+        List<QueryDocumentSnapshot> documents = result.docs;
+
+        if (documents.length == 0) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            "name": user.displayName,
+            "email": user.email,
+            "uId": user.uid,
+            "stripeId": '',
+          });
+
+          // if documents is empty, i.e not user in firestore yet
+          // so we save to local memory directly User
+          preferences.setString("uId", user.uid);
+          preferences.setString("name", user.displayName);
+          preferences.setString("email", user.email);
+        }
+        // if firestore has user, we save directly from what is saved in
+        // documents list from fire store
+        else {
+          preferences.setString("uId", documents[0]["uId"]);
+          preferences.setString("email", documents[0]["email"]);
+          preferences.setString("name", documents[0]["name"]);
+        }
+        Fluttertoast.showToast(msg: "Login Successful");
+        _status = Status.Authenticated;
+        notifyListeners();
+        return true;
+      } else {
+        Fluttertoast.showToast(msg: "Login failed");
+        _status = Status.Unauthenticated;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      return false;
+    }
+  }
+
   // function responsible for checking for auth changes.
   Future<void> _onStateChanged(User user) async {
     if (user == null) {
       _status = Status.Unauthenticated;
+      notifyListeners();
     } else {
       _user = user;
       _userModel = await _userService.getUserById(user.uid);
-      _wishListItems = await _userService.getWishList(userId: _user.uid);
       _status = Status.Authenticated;
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   // function responsible for getting user data from firestore
@@ -103,7 +186,6 @@ class UserProvider with ChangeNotifier {
     try {
       var uuid = Uuid();
       String cartItemId = uuid.v4();
-      // List<CartItemModel> cart = _userModel.cart;
 
       Map cartItem = {
         "id": cartItemId,

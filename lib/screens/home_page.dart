@@ -3,6 +3,7 @@ import 'package:FashStore/components/products.dart';
 import 'package:FashStore/helper/navigator.dart';
 import 'package:FashStore/provider/product_provider.dart';
 import 'package:FashStore/provider/user_provider.dart';
+import 'package:FashStore/screens/login.dart';
 import 'package:FashStore/screens/order_page.dart';
 import 'package:FashStore/screens/search_screen.dart';
 import 'package:flutter/material.dart';
@@ -187,6 +188,10 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.backspace_sharp, color: Colors.pink),
               onTap: () {
                 userProvider.signOut();
+                changeRouteReplacement(
+                                    context: context,
+                                    destination: Login(),
+                                  );
               },
             ),
           ],
